@@ -1,0 +1,3804 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MINDLOG | Painel Executivo de Gestão de Pessoas & Folha - 1º Semestre 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-primary: #F4F6F9;
+      --bg-secondary: #FFFFFF;
+      --bg-card: rgba(255, 255, 255, 0.94);
+      --bg-card-hover: #FFFFFF;
+      --border-color: rgba(15, 23, 42, 0.09);
+      --border-subtle: rgba(15, 23, 42, 0.05);
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #94A3B8;
+      
+      /* Padrão Corporativo de Áreas */
+      --color-transporte: #EA580C; /* Laranja */
+      --color-transporte-soft: rgba(234, 88, 12, 0.14);
+      --color-logistica: #0284C7;  /* Azul */
+      --color-logistica-soft: rgba(2, 132, 199, 0.14);
+      --color-sga: #64748B;        /* Cinza */
+      --color-sga-soft: rgba(100, 116, 139, 0.14);
+      
+      /* Cores de Apoio */
+      --accent-blue: #0284C7;
+      --accent-emerald: #059669;
+      --accent-amber: #D97706;
+      --accent-rose: #E11D48;
+      --accent-indigo: #4F46E5;
+      
+      --card-glow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+      --chart-grid: rgba(0, 0, 0, 0.05);
+      --chart-text: #64748B;
+      --btn-bg: #F8FAFC;
+      --btn-hover: #EEF2F6;
+      --edit-outline: 1px dashed rgba(2, 132, 199, 0.6);
+      
+      --callout-bg: linear-gradient(135deg, rgba(234, 88, 12, 0.06) 0%, rgba(2, 132, 199, 0.06) 100%);
+      --callout-border: rgba(234, 88, 12, 0.35);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #090D16;
+      --bg-secondary: #0F172A;
+      --bg-card: rgba(15, 23, 42, 0.78);
+      --bg-card-hover: rgba(30, 41, 59, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-subtle: rgba(255, 255, 255, 0.04);
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      
+      /* Padrão Corporativo Dark */
+      --color-transporte: #F97316; /* Laranja Vívido */
+      --color-transporte-soft: rgba(249, 115, 22, 0.18);
+      --color-logistica: #38BDF8;  /* Azul Ciano */
+      --color-logistica-soft: rgba(56, 189, 248, 0.18);
+      --color-sga: #94A3B8;        /* Cinza Claro */
+      --color-sga-soft: rgba(148, 163, 184, 0.18);
+      
+      --accent-blue: #38BDF8;
+      --accent-emerald: #10B981;
+      --accent-amber: #F59E0B;
+      --accent-rose: #F43F5E;
+      --accent-indigo: #6366F1;
+      
+      --card-glow: 0 12px 36px 0 rgba(0, 0, 0, 0.37);
+      --chart-grid: rgba(255, 255, 255, 0.05);
+      --chart-text: #94A3B8;
+      --btn-bg: rgba(255, 255, 255, 0.04);
+      --btn-hover: rgba(255, 255, 255, 0.08);
+      --edit-outline: 1px dashed rgba(56, 189, 248, 0.6);
+      
+      --callout-bg: linear-gradient(135deg, rgba(249, 115, 22, 0.12) 0%, rgba(56, 189, 248, 0.12) 100%);
+      --callout-border: rgba(249, 115, 22, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-weight: 300;
+      line-height: 1.5;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1780px;
+      margin: 0 auto;
+      padding: 24px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .company-tag {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--color-logistica);
+    }
+
+    .header-title {
+      font-size: 1.65rem;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .header-title strong {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .header-subtitle {
+      font-size: 0.82rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--accent-emerald);
+      box-shadow: 0 0 10px var(--accent-emerald);
+    }
+
+    .header-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 7px 15px;
+      border-radius: 8px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .header-btn:hover {
+      border-color: var(--color-logistica);
+      color: var(--color-logistica);
+    }
+
+    .header-btn.active {
+      background: var(--color-logistica);
+      border-color: var(--color-logistica);
+      color: #FFFFFF;
+    }
+
+    .header-btn.btn-accent {
+      background: var(--btn-bg);
+      border-color: var(--color-transporte);
+      color: var(--color-transporte);
+    }
+
+    .header-btn.btn-accent.active {
+      background: var(--color-transporte);
+      color: #FFFFFF;
+    }
+
+    /* NAVIGATION TABS */
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+    }
+
+    .tab-btn.active {
+      color: var(--color-logistica);
+      background: var(--bg-secondary);
+      border-color: var(--border-color);
+      font-weight: 500;
+    }
+
+    /* EXECUTIVE CALLOUT CARD (FRISADO) */
+    .executive-callout {
+      background: var(--callout-bg);
+      border: 1px solid var(--callout-border);
+      border-left: 4px solid var(--color-transporte);
+      border-radius: 10px;
+      padding: 18px 24px;
+      box-shadow: var(--card-glow);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+
+    .callout-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .callout-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-transporte);
+    }
+
+    .callout-source {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    .callout-text {
+      font-size: 0.94rem;
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 1.6;
+      letter-spacing: -0.01em;
+    }
+
+    /* EDIT MODE NOTIFICATION BANNER */
+    .edit-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px;
+      background: rgba(2, 132, 199, 0.1);
+      border: 1px solid var(--color-logistica);
+      border-radius: 8px;
+      font-size: 0.76rem;
+      color: var(--text-primary);
+    }
+
+    .edit-banner.visible {
+      display: flex;
+    }
+
+    .editable-element[contenteditable="true"] {
+      outline: var(--edit-outline);
+      outline-offset: 3px;
+      border-radius: 3px;
+      background-color: rgba(2, 132, 199, 0.04);
+      cursor: text;
+    }
+
+    /* COLOR CUSTOMIZER MODAL */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 28px;
+      max-width: 580px;
+      width: 90%;
+      box-shadow: var(--card-glow);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 14px;
+    }
+
+    .modal-title {
+      font-size: 1.05rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .color-picker-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .color-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px;
+      background: var(--btn-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+    }
+
+    .color-item label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+    }
+
+    .color-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .color-input-wrapper input[type="color"] {
+      -webkit-appearance: none;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .color-input-wrapper input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    .color-input-wrapper input[type="color"]::-webkit-color-swatch {
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+    }
+
+    .color-hex {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-primary);
+    }
+
+    .palette-presets {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .presets-title {
+      font-size: 0.72rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+    }
+
+    .presets-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      padding: 6px 12px;
+      background: var(--btn-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+
+    .preset-btn:hover {
+      border-color: var(--color-logistica);
+      color: var(--color-logistica);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* INSTRUCTION BANNER */
+    .interaction-hint {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .interaction-hint strong {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .interaction-hint .hint-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--color-logistica-soft);
+      color: var(--color-logistica);
+      letter-spacing: 0.05em;
+    }
+
+    /* AREA LEGEND INDICATOR */
+    .area-legend-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 16px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.72rem;
+      flex-wrap: wrap;
+    }
+
+    .legend-title {
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      font-size: 0.66rem;
+    }
+
+    .legend-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-primary);
+    }
+
+    .legend-box {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+
+    /* KPI RIBBON */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--card-glow);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+    }
+
+    .kpi-card.accent-blue::before { background: linear-gradient(90deg, transparent, var(--color-logistica), transparent); }
+    .kpi-card.accent-emerald::before { background: linear-gradient(90deg, transparent, var(--accent-emerald), transparent); }
+    .kpi-card.accent-amber::before { background: linear-gradient(90deg, transparent, var(--color-transporte), transparent); }
+    .kpi-card.accent-sga::before { background: linear-gradient(90deg, transparent, var(--color-sga), transparent); }
+    .kpi-card.accent-rose::before { background: linear-gradient(90deg, transparent, var(--accent-rose), transparent); }
+
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .kpi-title {
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .kpi-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--btn-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .kpi-value {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .kpi-value .unit {
+      font-size: 0.95rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      margin-right: 2px;
+    }
+
+    .kpi-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .trend-indicator {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 400;
+      font-size: 0.72rem;
+    }
+
+    .trend-positive { color: var(--accent-emerald); }
+    .trend-negative { color: var(--accent-rose); }
+    .trend-neutral { color: var(--color-logistica); }
+
+    /* SECTIONS & GRIDS */
+    .tab-pane {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .tab-pane.active {
+      display: flex;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .grid-2-1 {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    .grid-1-2 {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: var(--card-glow);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .card-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .card-title {
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--text-primary);
+      text-transform: uppercase;
+    }
+
+    .card-subtitle {
+      font-size: 0.72rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    .card-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ctrl-btn {
+      background: var(--btn-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .ctrl-btn:hover {
+      border-color: var(--color-logistica);
+      color: var(--color-logistica);
+      background: var(--btn-hover);
+    }
+
+    .ctrl-btn.active {
+      background: var(--color-logistica);
+      border-color: var(--color-logistica);
+      color: #FFFFFF;
+    }
+
+    .card-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--btn-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 320px;
+    }
+
+    .chart-container-sm {
+      position: relative;
+      width: 100%;
+      height: 250px;
+    }
+
+    .chart-container-lg {
+      position: relative;
+      width: 100%;
+      height: 380px;
+    }
+
+    /* DATA TABLES */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.76rem;
+      text-align: left;
+    }
+
+    table.data-table th {
+      padding: 10px 14px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--btn-bg);
+      white-space: nowrap;
+    }
+
+    table.data-table td {
+      padding: 12px 14px;
+      font-weight: 300;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+
+    table.data-table tr:hover td {
+      background: var(--btn-bg);
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .tag-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.04em;
+    }
+
+    .tag-transporte { background: var(--color-transporte-soft); color: var(--color-transporte); font-weight: 500; }
+    .tag-logistica { background: var(--color-logistica-soft); color: var(--color-logistica); font-weight: 500; }
+    .tag-sga { background: var(--color-sga-soft); color: var(--color-sga); font-weight: 500; }
+    .tag-emerald { background: rgba(5, 150, 105, 0.12); color: var(--accent-emerald); }
+    .tag-amber { background: rgba(217, 119, 6, 0.12); color: var(--accent-amber); }
+    .tag-rose { background: rgba(225, 29, 72, 0.12); color: var(--accent-rose); }
+
+    /* SUMMARY STATS STRIP */
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat-box {
+      padding: 12px 16px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+
+    .stat-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--text-primary);
+    }
+
+    /* FOOTER */
+    .footer {
+      margin-top: auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 1200px) {
+      .grid-2, .grid-3, .grid-2-1, .grid-1-2, .color-picker-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-left">
+        <span class="company-tag editable-element" id="txt-company">Mindlog Soluções Inteligentes — Diretoria Executiva</span>
+        <h1 class="header-title editable-element" id="txt-main-title">Relatório de Gestão Estratégica de <strong>Pessoas & Folha</strong></h1>
+        <p class="header-subtitle editable-element" id="txt-sub-title">Performance Consolidada 1º Semestre 2026 vs 2025 | Unidades Cotia, Embu e Filiais</p>
+      </div>
+      <div class="header-right">
+        <div class="status-badge">
+          <div class="status-dot"></div>
+          <span class="editable-element" id="txt-badge">Dados Auditados — 1S 2026</span>
+        </div>
+        <button class="header-btn btn-accent" onclick="toggleEditMode(this)" id="editModeBtn">Editar Textos</button>
+        <button class="header-btn" onclick="openColorModal()">Personalizar Cores</button>
+        <button class="header-btn" onclick="toggleAllLabels(this)" id="globalLabelsBtn">Exibir Todos os Rótulos</button>
+        <button class="header-btn" onclick="toggleTheme()" id="themeBtn">Modo Escuro</button>
+      </div>
+    </header>
+
+    <!-- EDIT MODE BANNER -->
+    <div class="edit-banner" id="editBanner">
+      <div>
+        <strong>Modo de Edição de Texto Ativado:</strong> Você pode clicar diretamente em qualquer título, aba, cabeçalho de gráfico ou texto na tela para editar o conteúdo.
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="ctrl-btn active" onclick="saveTextEdits()">Salvar Alterações</button>
+        <button class="ctrl-btn" onclick="resetTextEdits()">Restaurar Textos Originais</button>
+      </div>
+    </div>
+
+    <!-- CORPORATE AREA LEGEND BAR -->
+    <div class="area-legend-bar">
+      <span class="legend-title">Padrão Corporativo por Área:</span>
+      <div class="legend-pill">
+        <span class="legend-box" id="legendBoxTransporte" style="background: var(--color-transporte);"></span>
+        <span>Transporte (Laranja)</span>
+      </div>
+      <div class="legend-pill">
+        <span class="legend-box" id="legendBoxLogistica" style="background: var(--color-logistica);"></span>
+        <span>Logística (Azul)</span>
+      </div>
+      <div class="legend-pill">
+        <span class="legend-box" id="legendBoxSga" style="background: var(--color-sga);"></span>
+        <span>SG&A (Cinza)</span>
+      </div>
+    </div>
+
+    <!-- INTERACTION HINT -->
+    <div class="interaction-hint">
+      <div>
+        <strong>Interatividade Avançada:</strong> Clique em <code>Rótulos</code> em cada gráfico para exibir os valores numéricos. Os rótulos podem ser <strong>arrastados livremente pelo gráfico</strong> para ajuste visual e exportação executiva.
+      </div>
+      <span class="hint-tag">DRAGGABLE LABELS & CUSTOMIZABLE</span>
+    </div>
+
+    <!-- NAVIGATION TABS -->
+    <nav class="tabs-nav">
+      <button class="tab-btn active editable-element" id="tab-btn-1" onclick="switchTab(event, 'tab-visao-geral')">Visão Executiva</button>
+      <button class="tab-btn editable-element" id="tab-btn-novoa" onclick="switchTab(event, 'tab-comparativo-mensal-area')" style="color:var(--color-transporte); font-weight: 500;">Comparativo Mensal por Área (2025 vs 2026)</button>
+      <button class="tab-btn editable-element" id="tab-btn-2" onclick="switchTab(event, 'tab-folha')">Custo de Folha & Produtividade</button>
+      <button class="tab-btn editable-element" id="tab-btn-3" onclick="switchTab(event, 'tab-he')">Horas Extras & Eficiência Per Capita</button>
+      <button class="tab-btn editable-element" id="tab-btn-4" onclick="switchTab(event, 'tab-headcount')">Headcount & Movimentação</button>
+      <button class="tab-btn editable-element" id="tab-btn-5" onclick="switchTab(event, 'tab-absenteismo')">Absenteísmo & Afastamentos</button>
+      <button class="tab-btn editable-element" id="tab-btn-6" onclick="switchTab(event, 'tab-juridico')">Passivo Trabalhista & Riscos</button>
+    </nav>
+
+    <!-- EXECUTIVE KPI RIBBON -->
+    <section class="kpi-grid">
+      <div class="kpi-card accent-blue">
+        <div class="kpi-header">
+          <span class="kpi-title editable-element" id="kpi-t-1">Custo Total da Folha (1S26)</span>
+          <span class="kpi-tag editable-element" id="kpi-tag-1">FOLHA CONSOLIDADA</span>
+        </div>
+        <div class="kpi-value"><span class="unit">R$</span> 4.062.133,53</div>
+        <div class="kpi-footer">
+          <span class="editable-element" id="kpi-f-1">vs R$ 5.013.722,20 em 2025</span>
+          <span class="trend-indicator trend-positive">-18,98% (Otimização)</span>
+        </div>
+      </div>
+
+      <div class="kpi-card accent-emerald">
+        <div class="kpi-header">
+          <span class="kpi-title editable-element" id="kpi-t-2">Horas Extras Acumuladas</span>
+          <span class="kpi-tag editable-element" id="kpi-tag-2">3.645 HORAS</span>
+        </div>
+        <div class="kpi-value"><span class="unit">R$</span> 109.091,50</div>
+        <div class="kpi-footer">
+          <span class="editable-element" id="kpi-f-2">vs R$ 186.500,25 em 2025</span>
+          <span class="trend-indicator trend-positive">-41,51% (R$ -77,4k)</span>
+        </div>
+      </div>
+
+      <div class="kpi-card accent-amber">
+        <div class="kpi-header">
+          <span class="kpi-title editable-element" id="kpi-t-3">HE Per Capita Semestral</span>
+          <span class="kpi-tag editable-element" id="kpi-tag-3">MÉDIA / COLABORADOR</span>
+        </div>
+        <div class="kpi-value"><span class="unit">R$</span> 228,39 <span class="unit" style="font-size:0.9rem;">/ colab</span></div>
+        <div class="kpi-footer">
+          <span class="editable-element" id="kpi-f-3">vs R$ 246,20 em 2025</span>
+          <span class="trend-indicator trend-positive">-7,23% (Geral)</span>
+        </div>
+      </div>
+
+      <div class="kpi-card accent-sga">
+        <div class="kpi-header">
+          <span class="kpi-title editable-element" id="kpi-t-4">Headcount Ativo Final</span>
+          <span class="kpi-tag editable-element" id="kpi-tag-4">QUADRO 1S26</span>
+        </div>
+        <div class="kpi-value">81 <span class="unit" style="font-size:1rem;">colaboradores</span></div>
+        <div class="kpi-footer">
+          <span class="editable-element" id="kpi-f-4">Início de 2026: 118 posições</span>
+          <span class="trend-indicator trend-neutral">Ajuste de -31,36%</span>
+        </div>
+      </div>
+
+      <div class="kpi-card accent-rose">
+        <div class="kpi-header">
+          <span class="kpi-title editable-element" id="kpi-t-5">Eficiência em Passivos</span>
+          <span class="kpi-tag editable-element" id="kpi-tag-5">32 PROCESSOS</span>
+        </div>
+        <div class="kpi-value">89,55<span class="unit">%</span></div>
+        <div class="kpi-footer">
+          <span class="editable-element" id="kpi-f-5">Pleiteado: R$ 1,36M | Sentença: R$ 143k</span>
+          <span class="trend-indicator trend-positive">Economia: R$ 1,22M</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 1: VISÃO EXECUTIVA -->
+    <div id="tab-visao-geral" class="tab-pane active">
+      
+      <!-- PARECER EXECUTIVO FRISADO -->
+      <div class="executive-callout">
+        <div class="callout-header">
+          <span class="callout-tag editable-element" id="callout-tag-1">DIRETRIZ ESTRATÉGICA & DIAGNÓSTICO OPERACIONAL — HORAS EXTRAS</span>
+          <span class="callout-source editable-element" id="callout-src-1">BASE CONSOLIDADA 1º SEMESTRE 2025 vs 2026</span>
+        </div>
+        <p class="callout-text editable-element" id="callout-text-1">
+          “As horas extras apresentaram redução de 41,51% no semestre, com destaque para Transporte, que reduziu 45,39% no total e 26,65% no per capita. Em contrapartida, a Logística apresentou aumento de 59,21% no per capita, indicando necessidade de aprofundamento da distribuição das horas extras na área.”
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c1-title">Evolução Mensal do Custo de Folha</h2>
+              <span class="card-subtitle editable-element" id="c1-sub">Comparativo Homólogo 1º Semestre 2025 vs 1º Semestre 2026</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartFolhaEvolucao', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartFolhaEvolucao')">Reset</button>
+              <span class="card-badge">CONSOLIDADO</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartFolhaEvolucao"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c2-title">Curva de Desembolso de Horas Extras</h2>
+              <span class="card-subtitle editable-element" id="c2-sub">Redução Sistemática no 1º Semestre de 2026 (R$)</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartHEEvolucao', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartHEEvolucao')">Reset</button>
+              <span class="card-badge">EFICIÊNCIA</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartHEEvolucao"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c3-title">Folha por Área (1S 2026)</h2>
+              <span class="card-subtitle editable-element" id="c3-sub">Distribuição Orçamentária por Área</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartFolhaAreaDonut', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartFolhaAreaDonut')">Reset</button>
+            </div>
+          </div>
+          <div class="chart-container-sm">
+            <canvas id="chartFolhaAreaDonut"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c4-title">Reestruturação do Headcount</h2>
+              <span class="card-subtitle editable-element" id="c4-sub">Início vs Fim do Semestre 2026 por Área</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartHCDiff', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartHCDiff')">Reset</button>
+            </div>
+          </div>
+          <div class="chart-container-sm">
+            <canvas id="chartHCDiff"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c5-title">Resultado Jurídico-Trabalhista</h2>
+              <span class="card-subtitle editable-element" id="c5-sub">Valor da Causa vs Sentença Fixada</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartJuridicoMitigacao', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartJuridicoMitigacao')">Reset</button>
+            </div>
+          </div>
+          <div class="chart-container-sm">
+            <canvas id="chartJuridicoMitigacao"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title editable-element" id="tbl1-title">Matriz Sintética de Desempenho Operacional por Área</h2>
+            <span class="card-subtitle editable-element" id="tbl1-sub">Consolidação Integrada de Recursos Humanos — 1º Semestre de 2026</span>
+          </div>
+          <span class="card-badge">BALANCED VIEW</span>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Área Operacional</th>
+                <th>Custo Folha (1S26)</th>
+                <th>Var. Folha (vs 2025)</th>
+                <th>Horas Extras (1S26)</th>
+                <th>Headcount Final</th>
+                <th>Desligamentos</th>
+                <th>Custo Rescisório</th>
+                <th>Atestados (Dias)</th>
+                <th>Passivo (Sentenças)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong style="color: var(--color-logistica);">LOGÍSTICA</strong></td>
+                <td class="mono">R$ 786.429,62</td>
+                <td class="mono trend-positive">-43,97%</td>
+                <td class="mono">R$ 22.863,06</td>
+                <td class="mono">23 colabs</td>
+                <td class="mono">5</td>
+                <td class="mono">R$ 9.810,68</td>
+                <td class="mono">42 dias</td>
+                <td class="mono">R$ 28.277,24</td>
+              </tr>
+              <tr>
+                <td><strong style="color: var(--color-sga);">SG&A (Administrativo)</strong></td>
+                <td class="mono">R$ 1.007.244,63</td>
+                <td class="mono trend-positive">-20,18%</td>
+                <td class="mono">R$ 12.601,06</td>
+                <td class="mono">17 colabs</td>
+                <td class="mono">9</td>
+                <td class="mono">R$ 28.657,33</td>
+                <td class="mono">23 dias</td>
+                <td class="mono">R$ 22.000,00</td>
+              </tr>
+              <tr>
+                <td><strong style="color: var(--color-transporte);">TRANSPORTE</strong></td>
+                <td class="mono">R$ 2.268.459,28</td>
+                <td class="mono trend-positive">-3,39%</td>
+                <td class="mono">R$ 73.627,38</td>
+                <td class="mono">41 colabs</td>
+                <td class="mono">37</td>
+                <td class="mono">R$ 224.183,81</td>
+                <td class="mono">281 dias</td>
+                <td class="mono">R$ 92.733,40</td>
+              </tr>
+              <tr style="font-weight: 500; background: var(--btn-bg);">
+                <td><strong>TOTAL CONSOLIDADO</strong></td>
+                <td class="mono" style="color:var(--color-logistica);">R$ 4.062.133,53</td>
+                <td class="mono trend-positive">-18,98%</td>
+                <td class="mono" style="color:var(--accent-emerald);">R$ 109.091,50</td>
+                <td class="mono">81 colabs</td>
+                <td class="mono">51</td>
+                <td class="mono" style="color:var(--color-transporte);">R$ 262.651,82</td>
+                <td class="mono">346 dias</td>
+                <td class="mono" style="color:var(--accent-rose);">R$ 143.010,64</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- NOVA ABA: COMPARATIVO MENSAL POR ÁREA (2025 vs 2026) -->
+    <div id="tab-comparativo-mensal-area" class="tab-pane">
+      
+      <!-- CALLOUT FRISADO NO TOPO DA NOVA ABA -->
+      <div class="executive-callout">
+        <div class="callout-header">
+          <span class="callout-tag editable-element" id="callout-tag-2">PARECER EXECUTIVO — CONTROLADORIA & GESTÃO DE HORAS EXTRAS</span>
+          <span class="callout-source editable-element" id="callout-src-2">FONTE: ABA "MENSAL POR ÁREA" (1S25 x 1S26)</span>
+        </div>
+        <p class="callout-text editable-element" id="callout-text-2">
+          “As horas extras apresentaram redução de 41,51% no semestre, com destaque para Transporte, que reduziu 45,39% no total e 26,65% no per capita. Em contrapartida, a Logística apresentou aumento de 59,21% no per capita, indicando necessidade de aprofundamento da distribuição das horas extras na área.”
+        </p>
+      </div>
+
+      <!-- STAT STRIP ACUMULADO POR AREA -->
+      <div class="stat-strip">
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="cp-st-1">Transporte Total HE</span>
+          <span class="stat-val" style="color:var(--color-transporte);">R$ 73,6k <span style="font-size:0.75rem; color:var(--accent-emerald);">(-45,39%)</span></span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="cp-st-2">Transporte Per Capita</span>
+          <span class="stat-val" style="color:var(--color-transporte);">R$ 321,51 <span style="font-size:0.75rem; color:var(--accent-emerald);">(-26,65%)</span></span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="cp-st-3">Logística Total HE</span>
+          <span class="stat-val" style="color:var(--color-logistica);">R$ 22,8k <span style="font-size:0.75rem; color:var(--accent-emerald);">(-23,34%)</span></span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="cp-st-4">Logística Per Capita</span>
+          <span class="stat-val" style="color:var(--accent-rose);">R$ 170,98 <span style="font-size:0.75rem; color:var(--accent-rose);">(+59,21%)</span></span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="cp-st-5">SG&A Per Capita</span>
+          <span class="stat-val" style="color:var(--color-sga);">R$ 192,69 <span style="font-size:0.75rem; color:var(--color-sga);">(-0,12%)</span></span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c-comp-he-title">Total de Horas Extras Acumulado por Área (2025 vs 2026)</h2>
+              <span class="card-subtitle editable-element" id="c-comp-he-sub">Desembolso Total Acumulado no Semestre (R$)</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartCompAcumuladoHE', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartCompAcumuladoHE')">Reset</button>
+              <span class="card-badge">TOTAL HE</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartCompAcumuladoHE"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c-comp-pc-title">Per Capita Médio por Área (2025 vs 2026)</h2>
+              <span class="card-subtitle editable-element" id="c-comp-pc-sub">Custo Médio Semestral por Colaborador Ativo em HE (R$)</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartCompAcumuladoPC', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartCompAcumuladoPC')">Reset</button>
+              <span class="card-badge">PER CAPITA MÉDIO</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartCompAcumuladoPC"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c-comp-mensal-pc-title">Comparativo Mensal Per Capita: 2025 vs 2026 por Área</h2>
+              <span class="card-subtitle editable-element" id="c-comp-mensal-pc-sub">Comportamento Mês a Mês (Janeiro a Junho)</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartCompMensalPC', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartCompMensalPC')">Reset</button>
+              <span class="card-badge">MÊS A MÊS</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartCompMensalPC"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c-comp-colabs-title">Colaboradores com Horas Extras: 2025 vs 2026</h2>
+              <span class="card-subtitle editable-element" id="c-comp-colabs-sub">Evolução da Base de Beneficiários de HE por Mês</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartCompColabsHE', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartCompColabsHE')">Reset</button>
+              <span class="card-badge">HEADCOUNT EM HE</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartCompColabsHE"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABELA COMPLETA DA ABA MENSAL POR AREA -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title editable-element" id="tbl-mensal-area-title">Detalhamento Mensal Completo por Área (1S 2025 vs 1S 2026)</h2>
+            <span class="card-subtitle editable-element" id="tbl-mensal-area-sub">Extração Fiel da Planilha "Mensal por Área" — Horas Extras, Per Capita e Colaboradores</span>
+          </div>
+          <span class="card-badge">BASE AUDITADA</span>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mês</th>
+                <th>Área</th>
+                <th>HE 2025 (R$)</th>
+                <th>HE 2026 (R$)</th>
+                <th>Variação HE %</th>
+                <th>Per Capita 2025 (R$)</th>
+                <th>Per Capita 2026 (R$)</th>
+                <th>Variação Per Capita %</th>
+                <th>Colabs HE 2025</th>
+                <th>Colabs HE 2026</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Janeiro -->
+              <tr>
+                <td>Jan</td>
+                <td><span class="tag-pill tag-transporte">Transporte</span></td>
+                <td class="mono">R$ 22.404,58</td>
+                <td class="mono">R$ 24.457,37</td>
+                <td class="mono trend-negative">+9,16%</td>
+                <td class="mono">R$ 497,88</td>
+                <td class="mono">R$ 509,53</td>
+                <td class="mono trend-negative">+2,34%</td>
+                <td class="mono">45</td>
+                <td class="mono">48</td>
+              </tr>
+              <tr>
+                <td>Jan</td>
+                <td><span class="tag-pill tag-logistica">Logística</span></td>
+                <td class="mono">R$ 5.222,69</td>
+                <td class="mono">R$ 8.903,87</td>
+                <td class="mono trend-negative">+70,48%</td>
+                <td class="mono">R$ 116,06</td>
+                <td class="mono">R$ 370,99</td>
+                <td class="mono trend-negative">+219,66%</td>
+                <td class="mono">45</td>
+                <td class="mono">24</td>
+              </tr>
+              <tr>
+                <td>Jan</td>
+                <td><span class="tag-pill tag-sga">SG&A</span></td>
+                <td class="mono">R$ 3.707,99</td>
+                <td class="mono">R$ 1.433,66</td>
+                <td class="mono trend-positive">-61,34%</td>
+                <td class="mono">R$ 176,57</td>
+                <td class="mono">R$ 102,40</td>
+                <td class="mono trend-positive">-42,00%</td>
+                <td class="mono">21</td>
+                <td class="mono">14</td>
+              </tr>
+              <!-- Fevereiro -->
+              <tr>
+                <td>Fev</td>
+                <td><span class="tag-pill tag-transporte">Transporte</span></td>
+                <td class="mono">R$ 32.173,00</td>
+                <td class="mono">R$ 9.460,24</td>
+                <td class="mono trend-positive">-70,60%</td>
+                <td class="mono">R$ 643,46</td>
+                <td class="mono">R$ 242,57</td>
+                <td class="mono trend-positive">-62,30%</td>
+                <td class="mono">50</td>
+                <td class="mono">39</td>
+              </tr>
+              <tr>
+                <td>Fev</td>
+                <td><span class="tag-pill tag-logistica">Logística</span></td>
+                <td class="mono">R$ 5.729,24</td>
+                <td class="mono">R$ 3.307,77</td>
+                <td class="mono trend-positive">-42,27%</td>
+                <td class="mono">R$ 108,10</td>
+                <td class="mono">R$ 174,09</td>
+                <td class="mono trend-negative">+61,05%</td>
+                <td class="mono">53</td>
+                <td class="mono">19</td>
+              </tr>
+              <tr>
+                <td>Fev</td>
+                <td><span class="tag-pill tag-sga">SG&A</span></td>
+                <td class="mono">R$ 3.317,83</td>
+                <td class="mono">R$ 3.688,05</td>
+                <td class="mono trend-negative">+11,16%</td>
+                <td class="mono">R$ 184,32</td>
+                <td class="mono">R$ 335,28</td>
+                <td class="mono trend-negative">+81,90%</td>
+                <td class="mono">18</td>
+                <td class="mono">11</td>
+              </tr>
+              <!-- Março -->
+              <tr>
+                <td>Mar</td>
+                <td><span class="tag-pill tag-transporte">Transporte</span></td>
+                <td class="mono">R$ 20.455,51</td>
+                <td class="mono">R$ 5.419,08</td>
+                <td class="mono trend-positive">-73,51%</td>
+                <td class="mono">R$ 417,46</td>
+                <td class="mono">R$ 200,71</td>
+                <td class="mono trend-positive">-51,92%</td>
+                <td class="mono">49</td>
+                <td class="mono">27</td>
+              </tr>
+              <tr>
+                <td>Mar</td>
+                <td><span class="tag-pill tag-logistica">Logística</span></td>
+                <td class="mono">R$ 6.181,12</td>
+                <td class="mono">R$ 2.706,89</td>
+                <td class="mono trend-positive">-56,21%</td>
+                <td class="mono">R$ 118,87</td>
+                <td class="mono">R$ 112,79</td>
+                <td class="mono trend-positive">-5,12%</td>
+                <td class="mono">52</td>
+                <td class="mono">24</td>
+              </tr>
+              <tr>
+                <td>Mar</td>
+                <td><span class="tag-pill tag-sga">SG&A</span></td>
+                <td class="mono">R$ 3.719,38</td>
+                <td class="mono">R$ 1.771,74</td>
+                <td class="mono trend-positive">-52,36%</td>
+                <td class="mono">R$ 177,11</td>
+                <td class="mono">R$ 147,65</td>
+                <td class="mono trend-positive">-16,64%</td>
+                <td class="mono">21</td>
+                <td class="mono">12</td>
+              </tr>
+              <!-- Abril -->
+              <tr>
+                <td>Abr</td>
+                <td><span class="tag-pill tag-transporte">Transporte</span></td>
+                <td class="mono">R$ 26.206,22</td>
+                <td class="mono">R$ 10.993,29</td>
+                <td class="mono trend-positive">-58,05%</td>
+                <td class="mono">R$ 485,30</td>
+                <td class="mono">R$ 274,83</td>
+                <td class="mono trend-positive">-43,37%</td>
+                <td class="mono">54</td>
+                <td class="mono">40</td>
+              </tr>
+              <tr>
+                <td>Abr</td>
+                <td><span class="tag-pill tag-logistica">Logística</span></td>
+                <td class="mono">R$ 8.274,67</td>
+                <td class="mono">R$ 4.280,62</td>
+                <td class="mono trend-positive">-48,27%</td>
+                <td class="mono">R$ 153,23</td>
+                <td class="mono">R$ 178,36</td>
+                <td class="mono trend-negative">+16,40%</td>
+                <td class="mono">54</td>
+                <td class="mono">24</td>
+              </tr>
+              <tr>
+                <td>Abr</td>
+                <td><span class="tag-pill tag-sga">SG&A</span></td>
+                <td class="mono">R$ 3.908,89</td>
+                <td class="mono">R$ 1.970,36</td>
+                <td class="mono trend-positive">-49,59%</td>
+                <td class="mono">R$ 217,16</td>
+                <td class="mono">R$ 179,12</td>
+                <td class="mono trend-positive">-17,52%</td>
+                <td class="mono">18</td>
+                <td class="mono">11</td>
+              </tr>
+              <!-- Maio -->
+              <tr>
+                <td>Mai</td>
+                <td><span class="tag-pill tag-transporte">Transporte</span></td>
+                <td class="mono">R$ 19.685,39</td>
+                <td class="mono">R$ 9.700,09</td>
+                <td class="mono trend-positive">-50,72%</td>
+                <td class="mono">R$ 328,09</td>
+                <td class="mono">R$ 312,91</td>
+                <td class="mono trend-positive">-4,63%</td>
+                <td class="mono">60</td>
+                <td class="mono">31</td>
+              </tr>
+              <tr>
+                <td>Mai</td>
+                <td><span class="tag-pill tag-logistica">Logística</span></td>
+                <td class="mono">R$ 2.616,05</td>
+                <td class="mono">R$ 3.312,38</td>
+                <td class="mono trend-negative">+26,62%</td>
+                <td class="mono">R$ 62,29</td>
+                <td class="mono">R$ 150,56</td>
+                <td class="mono trend-negative">+141,72%</td>
+                <td class="mono">42</td>
+                <td class="mono">22</td>
+              </tr>
+              <tr>
+                <td>Mai</td>
+                <td><span class="tag-pill tag-sga">SG&A</span></td>
+                <td class="mono">R$ 2.585,07</td>
+                <td class="mono">R$ 2.118,31</td>
+                <td class="mono trend-positive">-18,06%</td>
+                <td class="mono">R$ 172,34</td>
+                <td class="mono">R$ 211,83</td>
+                <td class="mono trend-negative">+22,92%</td>
+                <td class="mono">15</td>
+                <td class="mono">10</td>
+              </tr>
+              <!-- Junho -->
+              <tr>
+                <td>Jun</td>
+                <td><span class="tag-pill tag-transporte">Transporte</span></td>
+                <td class="mono">R$ 13.909,96</td>
+                <td class="mono">R$ 13.597,31</td>
+                <td class="mono trend-positive">-2,25%</td>
+                <td class="mono">R$ 257,59</td>
+                <td class="mono">R$ 388,49</td>
+                <td class="mono trend-negative">+50,82%</td>
+                <td class="mono">54</td>
+                <td class="mono">35</td>
+              </tr>
+              <tr>
+                <td>Jun</td>
+                <td><span class="tag-pill tag-logistica">Logística</span></td>
+                <td class="mono">R$ 1.801,86</td>
+                <td class="mono">R$ 351,53</td>
+                <td class="mono trend-positive">-80,49%</td>
+                <td class="mono">R$ 85,80</td>
+                <td class="mono">R$ 39,06</td>
+                <td class="mono trend-positive">-54,48%</td>
+                <td class="mono">21</td>
+                <td class="mono">9</td>
+              </tr>
+              <tr>
+                <td>Jun</td>
+                <td><span class="tag-pill tag-sga">SG&A</span></td>
+                <td class="mono">R$ 4.600,80</td>
+                <td class="mono">R$ 1.618,94</td>
+                <td class="mono trend-positive">-64,81%</td>
+                <td class="mono">R$ 230,04</td>
+                <td class="mono">R$ 179,88</td>
+                <td class="mono trend-positive">-21,80%</td>
+                <td class="mono">20</td>
+                <td class="mono">9</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 3: CUSTO DE FOLHA -->
+    <div id="tab-folha" class="tab-pane">
+      
+      <div class="stat-strip">
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="flh-st-1">Folha Média Mensal 2026</span>
+          <span class="stat-val">R$ 677.022,25</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="flh-st-2">Folha Média Mensal 2025</span>
+          <span class="stat-val">R$ 835.620,37</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="flh-st-3">Economia Mensal Média</span>
+          <span class="stat-val" style="color:var(--accent-emerald);">R$ 158.598,11</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="flh-st-4">Área Maior Otimização</span>
+          <span class="stat-val" style="color:var(--color-logistica);">Logística (-44%)</span>
+        </div>
+      </div>
+
+      <div class="grid-2-1">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c6-title">Custo da Folha por Área — 2025 vs 2026</h2>
+              <span class="card-subtitle editable-element" id="c6-sub">Análise Orçamentária Setorial Homóloga (R$)</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartFolhaPorArea', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartFolhaPorArea')">Reset</button>
+              <span class="card-badge">ORÇAMENTO</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartFolhaPorArea"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c7-title">Composição Mensal da Folha (2026)</h2>
+              <span class="card-subtitle editable-element" id="c7-sub">Desembolso Empilhado por Área</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartFolhaStacked26', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartFolhaStacked26')">Reset</button>
+              <span class="card-badge">MÊS A MÊS</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartFolhaStacked26"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title editable-element" id="c8-title">Histórico de Produtividade: Faturamento x Comprometimento da Folha</h2>
+            <span class="card-subtitle editable-element" id="c8-sub">Indicador de Alavancagem Operacional (% Folha sobre Receita Líquida)</span>
+          </div>
+          <div class="card-controls">
+            <button class="ctrl-btn" onclick="toggleChartLabels('chartFatXFolha', this)">Rótulos</button>
+            <button class="ctrl-btn" onclick="resetChartLabels('chartFatXFolha')">Reset</button>
+            <span class="card-badge">EFICIÊNCIA DE ESCALA</span>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="chartFatXFolha"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 4: HORAS EXTRAS & EFICIÊNCIA -->
+    <div id="tab-he" class="tab-pane">
+      
+      <!-- CALLOUT FRISADO NA ABA DE HE -->
+      <div class="executive-callout">
+        <div class="callout-header">
+          <span class="callout-tag editable-element" id="callout-tag-3">ANÁLISE SETORIAL DE HORAS EXTRAS</span>
+          <span class="callout-source editable-element" id="callout-src-3">CONSOLIDADO 1S25 vs 1S26</span>
+        </div>
+        <p class="callout-text editable-element" id="callout-text-3">
+          “As horas extras apresentaram redução de 41,51% no semestre, com destaque para Transporte, que reduziu 45,39% no total e 26,65% no per capita. Em contrapartida, a Logística apresentou aumento de 59,21% no per capita, indicando necessidade de aprofundamento da distribuição das horas extras na área.”
+        </p>
+      </div>
+
+      <!-- PER CAPITA HIGHLIGHT STRIP -->
+      <div class="stat-strip">
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="he-st-1">HE Total Desembolsada</span>
+          <span class="stat-val">R$ 109.091,50</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="he-st-2">HE Per Capita Médio (1S26)</span>
+          <span class="stat-val" style="color:var(--color-logistica);">R$ 228,39 / colab</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="he-st-3">Per Capita Transporte</span>
+          <span class="stat-val" style="color:var(--color-transporte);">R$ 321,51 <span style="font-size:0.75rem; color:var(--accent-emerald);">(-26,6%)</span></span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="he-st-4">Per Capita Logística</span>
+          <span class="stat-val" style="color:var(--accent-rose);">R$ 170,98 <span style="font-size:0.75rem; color:var(--accent-rose);">(+59,2%)</span></span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="he-st-5">Per Capita SG&A</span>
+          <span class="stat-val" style="color:var(--color-sga);">R$ 192,69 <span style="font-size:0.75rem; color:var(--color-sga);">(-0,12%)</span></span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c-he-pc-val-title">Horas Extras Per Capita Financeira (R$/Colaborador)</h2>
+              <span class="card-subtitle editable-element" id="c-he-pc-val-sub">Custo Médio Mensal por Colaborador Ativo em HE no 1S 2026</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartHEPerCapitaValor', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartHEPerCapitaValor')">Reset</button>
+              <span class="card-badge">PER CAPITA R$</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartHEPerCapitaValor"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c-he-pc-hrs-title">Horas Extras Per Capita em Horas (h/Colaborador)</h2>
+              <span class="card-subtitle editable-element" id="c-he-pc-hrs-sub">Sobrecarga Física Média Mensal por Colaborador no 1S 2026</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartHEPerCapitaHoras', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartHEPerCapitaHoras')">Reset</button>
+              <span class="card-badge">PER CAPITA HORAS</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartHEPerCapitaHoras"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c9-title">Volume Físico de Horas Extras (Total de Horas)</h2>
+              <span class="card-subtitle editable-element" id="c9-sub">Comparativo Homólogo 2025 vs 2026</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartHEQtd', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartHEQtd')">Reset</button>
+              <span class="card-badge">VOLUME FÍSICO</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartHEQtd"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c10-title">Concentração de Horas Extras por Setor (1S26)</h2>
+              <span class="card-subtitle editable-element" id="c10-sub">Distribuição do Desembolso Financeiro por Área</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartHESetorDonut', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartHESetorDonut')">Reset</button>
+              <span class="card-badge">DISTRIBUIÇÃO</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartHESetorDonut"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title editable-element" id="c11-title">Top 8 Cargos com Maior Incidência de Horas Extras (1S 2026)</h2>
+            <span class="card-subtitle editable-element" id="c11-sub">Identificação dos Principais Gargalos Operacionais por Função</span>
+          </div>
+          <div class="card-controls">
+            <button class="ctrl-btn" onclick="toggleChartLabels('chartTopCargosHE', this)">Rótulos</button>
+            <button class="ctrl-btn" onclick="resetChartLabels('chartTopCargosHE')">Reset</button>
+            <span class="card-badge">OFENSORES</span>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="chartTopCargosHE"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 5: HEADCOUNT & MOVIMENTAÇÃO -->
+    <div id="tab-headcount" class="tab-pane">
+      
+      <div class="stat-strip">
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="hc-st-1">Quadro Inicial (Jan/26)</span>
+          <span class="stat-val">118 colaboradores</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="hc-st-2">Quadro Final (Jun/26)</span>
+          <span class="stat-val">81 colaboradores</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="hc-st-3">Total Demissões (1S26)</span>
+          <span class="stat-val" style="color:var(--accent-rose);">51 desligamentos</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="hc-st-4">Total Admissões (1S26)</span>
+          <span class="stat-val" style="color:var(--accent-emerald);">18 contratações</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c12-title">Movimentação Líquida: Admissões vs Demissões (1S26)</h2>
+              <span class="card-subtitle editable-element" id="c12-sub">Balanço de Pessoal por Área de Atuação</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartMovimentacao', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartMovimentacao')">Reset</button>
+              <span class="card-badge">TURNOVER</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartMovimentacao"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c13-title">Motivos dos Desligamentos (1S 2026)</h2>
+              <span class="card-subtitle editable-element" id="c13-sub">Perfil das Rescisões Contratuais Registradas</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartMotivosDemissao', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartMotivosDemissao')">Reset</button>
+              <span class="card-badge">MOTIVOS</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartMotivosDemissao"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c14-title">Impacto Financeiro: Custo Rescisório vs Admissional (1S26)</h2>
+              <span class="card-subtitle editable-element" id="c14-sub">Valores Totais Desembolsados em Rescisões e Contratações</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartCustosMovimentacao', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartCustosMovimentacao')">Reset</button>
+              <span class="card-badge">CUSTO DE TURNOVER</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartCustosMovimentacao"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c15-title">Custo Médio per Capita de Rescisão vs Admissão</h2>
+              <span class="card-subtitle editable-element" id="c15-sub">Valores Unitários por Colaborador Movimentado (R$)</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartTicketMedioMov', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartTicketMedioMov')">Reset</button>
+              <span class="card-badge">TICKET MÉDIO</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartTicketMedioMov"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 6: ABSENTEÍSMO & SAÚDE -->
+    <div id="tab-absenteismo" class="tab-pane">
+      
+      <div class="stat-strip">
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="abs-st-1">Total Faltas Injustificadas</span>
+          <span class="stat-val" style="color:var(--color-transporte);">143 faltas</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="abs-st-2">Total Dias de Atestado</span>
+          <span class="stat-val" style="color:var(--accent-rose);">346 dias</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="abs-st-3">Concentração em Transporte</span>
+          <span class="stat-val" style="color:var(--color-transporte);">81,2% dos atestados</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="abs-st-4">Afastamentos INSS / Maternidade</span>
+          <span class="stat-val">5 colaboradoras</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c16-title">Evolução Mensal de Dias Afastados por Atestado Médico</h2>
+              <span class="card-subtitle editable-element" id="c16-sub">Acompanhamento de Absenteísmo Clínico no 1º Semestre 2026 por Área</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartAtestadosEvolucao', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartAtestadosEvolucao')">Reset</button>
+              <span class="card-badge">SAÚDE OCUPACIONAL</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartAtestadosEvolucao"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c17-title">Faltas Injustificadas por Área (1S 2026)</h2>
+              <span class="card-subtitle editable-element" id="c17-sub">Ocorrências Mensais Registradas em Folha de Pagamento</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartFaltasEvolucao', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartFaltasEvolucao')">Reset</button>
+              <span class="card-badge">DISCIPLINA OPERACIONAL</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartFaltasEvolucao"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title editable-element" id="tbl2-title">Registro de Afastamentos Longos & Licenças (2026)</h2>
+            <span class="card-subtitle editable-element" id="tbl2-sub">Licença Maternidade e Afastamentos Previdenciários (INSS)</span>
+          </div>
+          <span class="card-badge">BENEFÍCIOS PREVIDENCIÁRIOS</span>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Colaboradora</th>
+                <th>Área</th>
+                <th>Tipo de Afastamento</th>
+                <th>Data de Início</th>
+                <th>Impacto em Folha</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>JESLANE ALMEIDA COELHO</td>
+                <td><span class="tag-pill tag-transporte">TRANSPORTE</span></td>
+                <td>LICENÇA MATERNIDADE</td>
+                <td class="mono">22/10/2025</td>
+                <td class="mono">Salário Maternidade</td>
+                <td><span class="tag-pill tag-emerald">EM VIGÊNCIA</span></td>
+              </tr>
+              <tr>
+                <td>VANESSA CONCEICAO ALVES DA SILVA</td>
+                <td><span class="tag-pill tag-logistica">LOGÍSTICA</span></td>
+                <td>LICENÇA MATERNIDADE</td>
+                <td class="mono">06/11/2025</td>
+                <td class="mono">Salário Maternidade</td>
+                <td><span class="tag-pill tag-emerald">EM VIGÊNCIA</span></td>
+              </tr>
+              <tr>
+                <td>RENATA DOS SANTOS FRANCO</td>
+                <td><span class="tag-pill tag-logistica">LOGÍSTICA</span></td>
+                <td>AFASTAMENTO INSS</td>
+                <td class="mono">27/05/2026</td>
+                <td class="mono">Auxílio Doença Previdenciário</td>
+                <td><span class="tag-pill tag-amber">EM ANDAMENTO</span></td>
+              </tr>
+              <tr>
+                <td>THAINA SILVA MONI</td>
+                <td><span class="tag-pill tag-logistica">LOGÍSTICA</span></td>
+                <td>LICENÇA MATERNIDADE</td>
+                <td class="mono">08/06/2026</td>
+                <td class="mono">Salário Maternidade</td>
+                <td><span class="tag-pill tag-emerald">EM VIGÊNCIA</span></td>
+              </tr>
+              <tr>
+                <td>VANESSA DA SILVA VIEIRA</td>
+                <td><span class="tag-pill tag-logistica">LOGÍSTICA</span></td>
+                <td>LICENÇA MATERNIDADE</td>
+                <td class="mono">30/06/2026</td>
+                <td class="mono">Salário Maternidade</td>
+                <td><span class="tag-pill tag-emerald">EM VIGÊNCIA</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 7: PASSIVO TRABALHISTA -->
+    <div id="tab-juridico" class="tab-pane">
+      
+      <div class="stat-strip">
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="jur-st-1">Total de Ações Mapeadas</span>
+          <span class="stat-val">32 processos</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="jur-st-2">Risco Inicial Pleiteado</span>
+          <span class="stat-val">R$ 1.367.915,77</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="jur-st-3">Desembolso Efetivo (Sentenças)</span>
+          <span class="stat-val" style="color:var(--accent-emerald);">R$ 143.010,64</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label editable-element" id="jur-st-4">Taxa de Mitigação Financeira</span>
+          <span class="stat-val" style="color:var(--color-logistica);">89,55% mitigado</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c18-title">Causa Pleiteada vs Sentença Homologada por Área</h2>
+              <span class="card-subtitle editable-element" id="c18-sub">Exposição Financeira Inicial vs Realizada (R$) por Área</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartPassivoArea', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartPassivoArea')">Reset</button>
+              <span class="card-badge">EXPOSIÇÃO JURÍDICA</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartPassivoArea"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c19-title">Ranking dos Principais Pleitos Reclamados</h2>
+              <span class="card-subtitle editable-element" id="c19-sub">Frequência de Pedidos nas Iniciais Trabalhistas</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartPleitosFrequencia', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetChartLabels('chartPleitosFrequencia')">Reset</button>
+              <span class="card-badge">CAUSAS RAIZ</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartPleitosFrequencia"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title editable-element" id="tbl3-title">Painel Geral de Processos Trabalhistas</h2>
+            <span class="card-subtitle editable-element" id="tbl3-sub">Status Processual, Varas do Trabalho e Resultados Homologados</span>
+          </div>
+          <span class="card-badge">CONTENCIOSO</span>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Reclamante</th>
+                <th>Área / Unidade</th>
+                <th>Vara / Foro</th>
+                <th>Pleito Principal</th>
+                <th>Valor Causa</th>
+                <th>Sentença / Acordo</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MILENA COSTA S. CELESTINO</td>
+                <td><span class="tag-pill tag-logistica">LOGÍSTICA / Embu</span></td>
+                <td>VARA DO EMBU DAS ARTES</td>
+                <td>Horas Extras, Acúmulo de Função</td>
+                <td class="mono">R$ 161.531,60</td>
+                <td class="mono trend-positive">R$ 5.582,50</td>
+                <td><span class="tag-pill tag-emerald">FINALIZADO</span></td>
+              </tr>
+              <tr>
+                <td>CARLOS EDUARDO PEREIRA</td>
+                <td><span class="tag-pill tag-transporte">TRANSPORTE / Embu</span></td>
+                <td>VARA DO EMBU DAS ARTES</td>
+                <td>Vínculo CLT, Dano Moral, Horas Extras</td>
+                <td class="mono">R$ 61.464,46</td>
+                <td class="mono">R$ 0,00</td>
+                <td><span class="tag-pill tag-amber">AGUARDANDO</span></td>
+              </tr>
+              <tr>
+                <td>TATIANA PERRI DA SILVA</td>
+                <td><span class="tag-pill tag-logistica">LOGÍSTICA / Embu</span></td>
+                <td>VARA DO EMBU DAS ARTES</td>
+                <td>Periculosidade, Doença Adquirida, Dano Moral</td>
+                <td class="mono">R$ 168.397,68</td>
+                <td class="mono trend-positive">R$ 0,00 (Improcedente)</td>
+                <td><span class="tag-pill tag-emerald">FINALIZADO</span></td>
+              </tr>
+              <tr>
+                <td>JEFFERSON PINHEIRO PASSOS</td>
+                <td><span class="tag-pill tag-transporte">TRANSPORTE / Embu</span></td>
+                <td>VARA DO EMBU DAS ARTES</td>
+                <td>Horas Extras, Assédio Moral</td>
+                <td class="mono">R$ 79.000,00</td>
+                <td class="mono">R$ 18.000,00</td>
+                <td><span class="tag-pill tag-emerald">FINALIZADO</span></td>
+              </tr>
+              <tr>
+                <td>FERNANDA CAROLINE CARDOSO</td>
+                <td><span class="tag-pill tag-sga">SG&A / ADM</span></td>
+                <td>VARA DO EMBU DAS ARTES</td>
+                <td>Assédio Moral, Horas Extras</td>
+                <td class="mono">R$ 81.655,09</td>
+                <td class="mono">R$ 13.000,00</td>
+                <td><span class="tag-pill tag-emerald">FINALIZADO</span></td>
+              </tr>
+              <tr>
+                <td>DOUGLAS MORAES GABRIEL</td>
+                <td><span class="tag-pill tag-transporte">TRANSPORTE / Embu</span></td>
+                <td>VARA DO EMBU DAS ARTES</td>
+                <td>Horas Extras, Dano Moral</td>
+                <td class="mono">R$ 74.000,00</td>
+                <td class="mono">R$ 6.924,93</td>
+                <td><span class="tag-pill tag-emerald">FINALIZADO</span></td>
+              </tr>
+              <tr>
+                <td>GINO LIBERATO DA SILVA</td>
+                <td><span class="tag-pill tag-transporte">TRANSPORTE / GRU</span></td>
+                <td>VARA DE GUARULHOS</td>
+                <td>Insalubridade, Periculosidade, HE</td>
+                <td class="mono">R$ 80.000,00</td>
+                <td class="mono">R$ 5.000,00</td>
+                <td><span class="tag-pill tag-emerald">FINALIZADO</span></td>
+              </tr>
+              <tr>
+                <td>TIAGO VAZ CARDOSO</td>
+                <td><span class="tag-pill tag-transporte">TRANSPORTE / Embu</span></td>
+                <td>VARA DO EMBU DAS ARTES</td>
+                <td>Reversão JC, Desvio de Função</td>
+                <td class="mono">R$ 38.954,83</td>
+                <td class="mono">R$ 31.195,80</td>
+                <td><span class="tag-pill tag-emerald">FINALIZADO</span></td>
+              </tr>
+              <tr>
+                <td>BRUNO DA CRUZ ALVES PEQUENO</td>
+                <td><span class="tag-pill tag-transporte">TRANSPORTE / GRU</span></td>
+                <td>VARA DE GUARULHOS</td>
+                <td>FGTS, Insalubridade, Dano Moral</td>
+                <td class="mono">R$ 37.555,80</td>
+                <td class="mono trend-positive">R$ 0,00</td>
+                <td><span class="tag-pill tag-logistica">ARQUIVADO</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="editable-element" id="txt-footer-l">Mindlog Soluções Inteligentes — Sistema de Inteligência de Departamento Pessoal & Controladoria</div>
+      <div class="editable-element" id="txt-footer-r">Base de Dados Consolidada — 1º Semestre 2026 | Documento Confidencial para a Diretoria</div>
+    </footer>
+
+  </div>
+
+  <!-- COLOR CUSTOMIZER MODAL -->
+  <div class="modal-backdrop" id="colorModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Personalização de Cores dos Gráficos</h3>
+        <button class="modal-close" onclick="closeColorModal()">[X]</button>
+      </div>
+
+      <div class="color-picker-grid">
+        <div class="color-item">
+          <label>Transporte</label>
+          <div class="color-input-wrapper">
+            <input type="color" id="pickerTransporte" value="#EA580C" onchange="updateAreaColor('transporte', this.value)">
+            <span class="color-hex" id="hexTransporte">#EA580C</span>
+          </div>
+        </div>
+
+        <div class="color-item">
+          <label>Logística</label>
+          <div class="color-input-wrapper">
+            <input type="color" id="pickerLogistica" value="#0284C7" onchange="updateAreaColor('logistica', this.value)">
+            <span class="color-hex" id="hexLogistica">#0284C7</span>
+          </div>
+        </div>
+
+        <div class="color-item">
+          <label>SG&A</label>
+          <div class="color-input-wrapper">
+            <input type="color" id="pickerSga" value="#64748B" onchange="updateAreaColor('sga', this.value)">
+            <span class="color-hex" id="hexSga">#64748B</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="palette-presets">
+        <span class="presets-title">Esquemas de Cores Rápidos:</span>
+        <div class="presets-row">
+          <button class="preset-btn" onclick="applyPreset('#EA580C', '#0284C7', '#64748B')">Padrão Corporativo</button>
+          <button class="preset-btn" onclick="applyPreset('#F97316', '#38BDF8', '#94A3B8')">Tons Vivos</button>
+          <button class="preset-btn" onclick="applyPreset('#D97706', '#2563EB', '#475569')">Contraste Alto</button>
+          <button class="preset-btn" onclick="applyPreset('#C2410C', '#0369A1', '#334155')">Clássico Sóbrio</button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="ctrl-btn" onclick="applyPreset('#EA580C', '#0284C7', '#64748B')">Restaurar Padrão</button>
+        <button class="ctrl-btn active" onclick="closeColorModal()">Concluir</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State management for Theme and Colors
+    let currentTheme = 'light';
+    let editModeActive = false;
+
+    let areaColors = {
+      transporte: '#EA580C',
+      logistica: '#0284C7',
+      sga: '#64748B'
+    };
+
+    function updateCssAreaVariables() {
+      const root = document.documentElement;
+      root.style.setProperty('--color-transporte', areaColors.transporte);
+      root.style.setProperty('--color-logistica', areaColors.logistica);
+      root.style.setProperty('--color-sga', areaColors.sga);
+      
+      const elT = document.getElementById('legendBoxTransporte');
+      if (elT) elT.style.background = areaColors.transporte;
+      const elL = document.getElementById('legendBoxLogistica');
+      if (elL) elL.style.background = areaColors.logistica;
+      const elS = document.getElementById('legendBoxSga');
+      if (elS) elS.style.background = areaColors.sga;
+    }
+
+    function openColorModal() {
+      document.getElementById('pickerTransporte').value = areaColors.transporte;
+      document.getElementById('hexTransporte').textContent = areaColors.transporte;
+      document.getElementById('pickerLogistica').value = areaColors.logistica;
+      document.getElementById('hexLogistica').textContent = areaColors.logistica;
+      document.getElementById('pickerSga').value = areaColors.sga;
+      document.getElementById('hexSga').textContent = areaColors.sga;
+      document.getElementById('colorModal').classList.add('open');
+    }
+
+    function closeColorModal() {
+      document.getElementById('colorModal').classList.remove('open');
+    }
+
+    function updateAreaColor(area, hex) {
+      areaColors[area] = hex;
+      document.getElementById('hex' + area.charAt(0).toUpperCase() + area.slice(1)).textContent = hex;
+      updateCssAreaVariables();
+      refreshAllChartsColors();
+    }
+
+    function applyPreset(transp, logist, sga) {
+      areaColors.transporte = transp;
+      areaColors.logistica = logist;
+      areaColors.sga = sga;
+
+      document.getElementById('pickerTransporte').value = transp;
+      document.getElementById('hexTransporte').textContent = transp;
+      document.getElementById('pickerLogistica').value = logist;
+      document.getElementById('hexLogistica').textContent = logist;
+      document.getElementById('pickerSga').value = sga;
+      document.getElementById('hexSga').textContent = sga;
+
+      updateCssAreaVariables();
+      refreshAllChartsColors();
+    }
+
+    // Toggle Theme
+    function toggleTheme() {
+      const html = document.documentElement;
+      const themeBtn = document.getElementById('themeBtn');
+      if (currentTheme === 'light') {
+        html.setAttribute('data-theme', 'dark');
+        currentTheme = 'dark';
+        themeBtn.textContent = 'Modo Claro';
+      } else {
+        html.setAttribute('data-theme', 'light');
+        currentTheme = 'light';
+        themeBtn.textContent = 'Modo Escuro';
+      }
+      updateChartColors();
+    }
+
+    // Text Editing Mode
+    function toggleEditMode(btn) {
+      editModeActive = !editModeActive;
+      const banner = document.getElementById('editBanner');
+      const editables = document.querySelectorAll('.editable-element');
+
+      if (editModeActive) {
+        btn.classList.add('active');
+        btn.textContent = 'Finalizar Edição';
+        banner.classList.add('visible');
+        editables.forEach(el => el.setAttribute('contenteditable', 'true'));
+      } else {
+        btn.classList.remove('active');
+        btn.textContent = 'Editar Textos';
+        banner.classList.remove('visible');
+        editables.forEach(el => el.removeAttribute('contenteditable'));
+      }
+    }
+
+    function saveTextEdits() {
+      const editables = document.querySelectorAll('.editable-element');
+      const savedTexts = {};
+      editables.forEach(el => {
+        if (el.id) {
+          savedTexts[el.id] = el.innerHTML;
+        }
+      });
+      try {
+        localStorage.setItem('mindlog_dashboard_texts_v4', JSON.stringify(savedTexts));
+      } catch (e) {}
+      alert('Alterações de texto salvas com sucesso!');
+    }
+
+    function loadSavedTextEdits() {
+      try {
+        const data = localStorage.getItem('mindlog_dashboard_texts_v4');
+        if (data) {
+          const savedTexts = JSON.parse(data);
+          for (let id in savedTexts) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = savedTexts[id];
+          }
+        }
+      } catch (e) {}
+    }
+
+    function resetTextEdits() {
+      if (confirm('Deseja restaurar todos os textos originais?')) {
+        try {
+          localStorage.removeItem('mindlog_dashboard_texts_v4');
+        } catch (e) {}
+        location.reload();
+      }
+    }
+
+    // Tab Switching
+    function switchTab(evt, tabId) {
+      const tabPanes = document.querySelectorAll('.tab-pane');
+      tabPanes.forEach(pane => pane.classList.remove('active'));
+
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      tabBtns.forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById(tabId).classList.add('active');
+      evt.currentTarget.classList.add('active');
+
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 50);
+    }
+
+    // Chart Theme Helper
+    function getChartTheme() {
+      const isDark = currentTheme === 'dark';
+      return {
+        gridColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)',
+        textColor: isDark ? '#94A3B8' : '#64748B',
+        tooltipBg: isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+        tooltipText: isDark ? '#F8FAFC' : '#0F172A',
+        tooltipBorder: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+      };
+    }
+
+    let charts = {};
+
+    function findHitLabel(chart, x, y) {
+      if (!chart._labelHitBoxes) return null;
+      for (let i = chart._labelHitBoxes.length - 1; i >= 0; i--) {
+        const box = chart._labelHitBoxes[i];
+        if (x >= box.x1 && x <= box.x2 && y >= box.y1 && y <= box.y2) {
+          return box;
+        }
+      }
+      return null;
+    }
+
+    function formatChartDataValue(val, chartId) {
+      if (typeof val !== 'number') return String(val);
+      
+      if (chartId === 'chartFatXFolha' || chartId === 'chartJuridicoMitigacao') {
+        if (val <= 100) return val.toFixed(1).replace('.', ',') + '%';
+      }
+      
+      if (chartId === 'chartHEPerCapitaValor' || chartId === 'chartCompAcumuladoPC' || chartId === 'chartCompMensalPC') {
+        return 'R$ ' + val.toFixed(0);
+      }
+      if (chartId === 'chartHEPerCapitaHoras') {
+        return val.toFixed(1).replace('.', ',') + ' h';
+      }
+      
+      if (Math.abs(val) >= 1000000) {
+        return 'R$ ' + (val / 1000000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 2 }) + 'M';
+      }
+      if (Math.abs(val) >= 10000) {
+        return 'R$ ' + (val / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'k';
+      }
+      if (Math.abs(val) >= 1000) {
+        return val.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 });
+      }
+      
+      return Number.isInteger(val) ? String(val) : val.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    }
+
+    // Draggable Labels Plugin
+    const draggableLabelsPlugin = {
+      id: 'draggableLabels',
+      afterInit(chart) {
+        chart._showLabels = false;
+        chart._labelOffsets = {};
+        chart._draggingLabel = null;
+        chart._labelHitBoxes = [];
+
+        const canvas = chart.canvas;
+
+        canvas.addEventListener('pointerdown', (e) => {
+          if (!chart._showLabels) return;
+          const rect = canvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          const hit = findHitLabel(chart, x, y);
+          if (hit) {
+            chart._draggingLabel = {
+              key: hit.key,
+              startX: e.clientX,
+              startY: e.clientY,
+              initialDx: chart._labelOffsets[hit.key]?.dx || 0,
+              initialDy: chart._labelOffsets[hit.key]?.dy || 0
+            };
+            try { canvas.setPointerCapture(e.pointerId); } catch(err) {}
+            canvas.style.cursor = 'grabbing';
+          }
+        });
+
+        canvas.addEventListener('pointermove', (e) => {
+          if (!chart._showLabels) return;
+          const rect = canvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          if (chart._draggingLabel) {
+            const deltaX = e.clientX - chart._draggingLabel.startX;
+            const deltaY = e.clientY - chart._draggingLabel.startY;
+
+            chart._labelOffsets[chart._draggingLabel.key] = {
+              dx: chart._draggingLabel.initialDx + deltaX,
+              dy: chart._draggingLabel.initialDy + deltaY
+            };
+            chart.render();
+          } else {
+            const hit = findHitLabel(chart, x, y);
+            canvas.style.cursor = hit ? 'grab' : 'default';
+          }
+        });
+
+        const endDrag = (e) => {
+          if (chart._draggingLabel) {
+            try { canvas.releasePointerCapture(e.pointerId); } catch(err) {}
+            chart._draggingLabel = null;
+            const rect = canvas.getBoundingClientRect();
+            const hit = findHitLabel(chart, e.clientX - rect.left, e.clientY - rect.top);
+            canvas.style.cursor = hit ? 'grab' : 'default';
+          }
+        };
+
+        canvas.addEventListener('pointerup', endDrag);
+        canvas.addEventListener('pointercancel', endDrag);
+      },
+
+      afterDraw(chart) {
+        if (!chart._showLabels) return;
+        const ctx = chart.ctx;
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        
+        chart._labelHitBoxes = [];
+
+        ctx.save();
+        ctx.font = '400 10.5px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        const bgBadge = isDark ? 'rgba(15, 23, 42, 0.92)' : 'rgba(255, 255, 255, 0.95)';
+        const borderBadge = isDark ? 'rgba(255, 255, 255, 0.20)' : 'rgba(0, 0, 0, 0.18)';
+        const textBadge = isDark ? '#F8FAFC' : '#0F172A';
+
+        chart.data.datasets.forEach((dataset, datasetIndex) => {
+          const meta = chart.getDatasetMeta(datasetIndex);
+          if (meta.hidden) return;
+
+          meta.data.forEach((element, index) => {
+            const val = dataset.data[index];
+            if (val === null || val === undefined) return;
+
+            const formattedVal = formatChartDataValue(val, chart.canvas.id);
+
+            let basePos = { x: 0, y: 0 };
+            if (typeof element.getCenterPoint === 'function') {
+              basePos = element.getCenterPoint();
+            } else if (element.x !== undefined && element.y !== undefined) {
+              basePos = { x: element.x, y: element.y };
+            }
+
+            let naturalDy = -15;
+            let naturalDx = 0;
+            if (chart.config.type === 'doughnut' || chart.config.type === 'pie') {
+              naturalDy = 0;
+            } else if (chart.options.indexAxis === 'y') {
+              naturalDy = 0;
+              naturalDx = 28;
+            }
+
+            const key = `${datasetIndex}_${index}`;
+            const offset = chart._labelOffsets[key] || { dx: 0, dy: 0 };
+            const posX = basePos.x + naturalDx + offset.dx;
+            const posY = basePos.y + naturalDy + offset.dy;
+
+            const textMetrics = ctx.measureText(formattedVal);
+            const paddingX = 6;
+            const paddingY = 3;
+            const boxWidth = Math.max(textMetrics.width + paddingX * 2, 24);
+            const boxHeight = 17 + paddingY;
+            const boxX = posX - boxWidth / 2;
+            const boxY = posY - boxHeight / 2;
+
+            chart._labelHitBoxes.push({
+              key: key,
+              x1: boxX,
+              y1: boxY,
+              x2: boxX + boxWidth,
+              y2: boxY + boxHeight
+            });
+
+            // Connector dashed line if moved
+            const dist = Math.hypot(posX - (basePos.x + naturalDx), posY - (basePos.y + naturalDy));
+            if (dist > 16) {
+              ctx.beginPath();
+              ctx.strokeStyle = isDark ? 'rgba(56, 189, 248, 0.4)' : 'rgba(2, 132, 199, 0.35)';
+              ctx.lineWidth = 1;
+              ctx.setLineDash([3, 3]);
+              ctx.moveTo(basePos.x, basePos.y);
+              ctx.lineTo(posX, posY);
+              ctx.stroke();
+              ctx.setLineDash([]);
+            }
+
+            // Badge Box
+            ctx.beginPath();
+            if (typeof ctx.roundRect === 'function') {
+              ctx.roundRect(boxX, boxY, boxWidth, boxHeight, 4);
+            } else {
+              ctx.rect(boxX, boxY, boxWidth, boxHeight);
+            }
+            ctx.fillStyle = bgBadge;
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.12)';
+            ctx.shadowBlur = 4;
+            ctx.shadowOffsetY = 1;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetY = 0;
+
+            ctx.strokeStyle = (chart._draggingLabel && chart._draggingLabel.key === key) ? 'var(--color-logistica)' : borderBadge;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Text
+            ctx.fillStyle = textBadge;
+            ctx.fillText(formattedVal, posX, posY + 1);
+          });
+        });
+
+        ctx.restore();
+      }
+    };
+
+    Chart.register(draggableLabelsPlugin);
+
+    function toggleChartLabels(chartId, btn) {
+      const chart = charts[chartId];
+      if (!chart) return;
+      chart._showLabels = !chart._showLabels;
+      if (btn) {
+        if (chart._showLabels) {
+          btn.classList.add('active');
+          btn.textContent = 'Rótulos ON';
+        } else {
+          btn.classList.remove('active');
+          btn.textContent = 'Rótulos';
+        }
+      }
+      chart.render();
+    }
+
+    function resetChartLabels(chartId) {
+      const chart = charts[chartId];
+      if (!chart) return;
+      chart._labelOffsets = {};
+      chart.render();
+    }
+
+    let allLabelsActive = false;
+    function toggleAllLabels(btn) {
+      allLabelsActive = !allLabelsActive;
+      btn.textContent = allLabelsActive ? 'Ocultar Todos os Rótulos' : 'Exibir Todos os Rótulos';
+      btn.classList.toggle('active', allLabelsActive);
+
+      for (let key in charts) {
+        if (charts[key]) {
+          charts[key]._showLabels = allLabelsActive;
+          const ctrlBtns = document.querySelectorAll(`button[onclick*="'${key}'"]`);
+          ctrlBtns.forEach(b => {
+            if (b.textContent.includes('Rótulos')) {
+              b.classList.toggle('active', allLabelsActive);
+              b.textContent = allLabelsActive ? 'Rótulos ON' : 'Rótulos';
+            }
+          });
+          charts[key].render();
+        }
+      }
+    }
+
+    // Initialize all Charts
+    function initCharts() {
+      const theme = getChartTheme();
+
+      Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+      Chart.defaults.font.size = 11;
+      Chart.defaults.font.weight = 300;
+      Chart.defaults.color = theme.textColor;
+      Chart.defaults.plugins.tooltip.padding = 10;
+      Chart.defaults.plugins.tooltip.cornerRadius = 6;
+      Chart.defaults.plugins.tooltip.titleFont = { weight: 600 };
+      Chart.defaults.plugins.legend.labels.usePointStyle = true;
+      Chart.defaults.plugins.legend.labels.pointStyle = 'circle';
+      Chart.defaults.plugins.legend.labels.boxWidth = 6;
+      Chart.defaults.plugins.legend.labels.boxHeight = 6;
+
+      // 1. Folha Evolução Mensal (Line)
+      const ctx1 = document.getElementById('chartFolhaEvolucao').getContext('2d');
+      charts.chartFolhaEvolucao = new Chart(ctx1, {
+        type: 'line',
+        data: {
+          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+          datasets: [
+            {
+              label: 'Folha 2025 (R$)',
+              data: [816121.97, 841315.16, 849172.53, 891280.11, 857172.73, 758659.70],
+              borderColor: areaColors.sga,
+              backgroundColor: 'transparent',
+              borderWidth: 1.8,
+              borderDash: [5, 5],
+              tension: 0.35,
+              pointRadius: 4,
+              pointHoverRadius: 6
+            },
+            {
+              label: 'Folha 2026 (R$)',
+              data: [742239.69, 648814.21, 651033.35, 722981.75, 660466.80, 636597.73],
+              borderColor: areaColors.logistica,
+              backgroundColor: 'rgba(2, 132, 199, 0.08)',
+              fill: true,
+              borderWidth: 2.2,
+              tension: 0.35,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              pointBackgroundColor: areaColors.logistica
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.dataset.label}: R$ ${c.raw.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { color: theme.gridColor } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => 'R$ ' + (v/1000).toFixed(0) + 'k' }
+            }
+          }
+        }
+      });
+
+      // 2. Horas Extras Evolução (Line)
+      const ctx2 = document.getElementById('chartHEEvolucao').getContext('2d');
+      charts.chartHEEvolucao = new Chart(ctx2, {
+        type: 'line',
+        data: {
+          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+          datasets: [
+            {
+              label: 'Horas Extras 2025 (R$)',
+              data: [31335.26, 41220.07, 30356.01, 38389.78, 24886.51, 20312.62],
+              borderColor: '#E11D48',
+              backgroundColor: 'transparent',
+              borderWidth: 1.8,
+              borderDash: [4, 4],
+              tension: 0.35,
+              pointRadius: 3
+            },
+            {
+              label: 'Horas Extras 2026 (R$)',
+              data: [34794.90, 16456.06, 9897.71, 17244.27, 15130.78, 15567.78],
+              borderColor: '#059669',
+              backgroundColor: 'rgba(5, 150, 105, 0.08)',
+              fill: true,
+              borderWidth: 2.2,
+              tension: 0.35,
+              pointRadius: 4,
+              pointBackgroundColor: '#059669'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.dataset.label}: R$ ${c.raw.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { color: theme.gridColor } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => 'R$ ' + (v/1000).toFixed(0) + 'k' }
+            }
+          }
+        }
+      });
+
+      // 3. Folha por Área Donut
+      const ctx3 = document.getElementById('chartFolhaAreaDonut').getContext('2d');
+      charts.chartFolhaAreaDonut = new Chart(ctx3, {
+        type: 'doughnut',
+        data: {
+          labels: ['Transporte', 'SG&A', 'Logística'],
+          datasets: [{
+            data: [2268459.28, 1007244.63, 786429.62],
+            backgroundColor: [areaColors.transporte, areaColors.sga, areaColors.logistica],
+            borderWidth: 0,
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '72%',
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.label}: R$ ${c.raw.toLocaleString('pt-BR', {minimumFractionDigits: 2})} (${((c.raw/4062133.53)*100).toFixed(1)}%)`
+              }
+            }
+          }
+        }
+      });
+
+      // 4. Headcount Diff (Bar)
+      const ctx4 = document.getElementById('chartHCDiff').getContext('2d');
+      charts.chartHCDiff = new Chart(ctx4, {
+        type: 'bar',
+        data: {
+          labels: ['Transporte', 'Logística', 'SG&A'],
+          datasets: [
+            {
+              label: 'Início Semestre',
+              data: [70, 26, 22],
+              backgroundColor: 'rgba(148, 163, 184, 0.45)',
+              borderRadius: 4
+            },
+            {
+              label: 'Fim Semestre',
+              data: [41, 23, 17],
+              backgroundColor: [areaColors.transporte, areaColors.logistica, areaColors.sga],
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { display: false } },
+            y: { grid: { color: theme.gridColor }, ticks: { stepSize: 20 } }
+          }
+        }
+      });
+
+      // 5. Jurídico Mitigação (Donut)
+      const ctx5 = document.getElementById('chartJuridicoMitigacao').getContext('2d');
+      charts.chartJuridicoMitigacao = new Chart(ctx5, {
+        type: 'doughnut',
+        data: {
+          labels: ['Economia Mitigada (89.5%)', 'Sentenças / Acordos (10.5%)'],
+          datasets: [{
+            data: [1224905.13, 143010.64],
+            backgroundColor: ['#059669', '#E11D48'],
+            borderWidth: 0,
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '72%',
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.label}: R$ ${c.raw.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`
+              }
+            }
+          }
+        }
+      });
+
+      // 6. Folha por Área 2025 vs 2026 (Bar)
+      const ctx6 = document.getElementById('chartFolhaPorArea').getContext('2d');
+      charts.chartFolhaPorArea = new Chart(ctx6, {
+        type: 'bar',
+        data: {
+          labels: ['Transporte', 'Logística', 'SG&A (Administrativo)'],
+          datasets: [
+            {
+              label: '1º Semestre 2025',
+              data: [2348072.65, 1403702.46, 1261947.09],
+              backgroundColor: 'rgba(148, 163, 184, 0.45)',
+              borderRadius: 4
+            },
+            {
+              label: '1º Semestre 2026',
+              data: [2268459.28, 786429.62, 1007244.63],
+              backgroundColor: [areaColors.transporte, areaColors.logistica, areaColors.sga],
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.dataset.label}: R$ ${c.raw.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => 'R$ ' + (v/1000).toFixed(0) + 'k' }
+            }
+          }
+        }
+      });
+
+      // 7. Folha Stacked 2026 por Mês
+      const ctx7 = document.getElementById('chartFolhaStacked26').getContext('2d');
+      charts.chartFolhaStacked26 = new Chart(ctx7, {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+          datasets: [
+            {
+              label: 'Transporte',
+              data: [451574.16, 367039.28, 361476.69, 399203.72, 367767.95, 321397.48],
+              backgroundColor: areaColors.transporte,
+              stack: 'folha'
+            },
+            {
+              label: 'Logística',
+              data: [126893.75, 126947.22, 138331.85, 154297.74, 129922.98, 110036.08],
+              backgroundColor: areaColors.logistica,
+              stack: 'folha'
+            },
+            {
+              label: 'SG&A',
+              data: [163771.78, 154827.71, 151224.81, 169480.29, 162775.87, 205164.17],
+              backgroundColor: areaColors.sga,
+              stack: 'folha'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.dataset.label}: R$ ${c.raw.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => 'R$ ' + (v/1000).toFixed(0) + 'k' }
+            }
+          }
+        }
+      });
+
+      // 8. Faturamento x % Folha (Combo Bar + Line)
+      const ctx8 = document.getElementById('chartFatXFolha').getContext('2d');
+      charts.chartFatXFolha = new Chart(ctx8, {
+        data: {
+          labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+          datasets: [
+            {
+              type: 'bar',
+              label: 'Faturamento Bruto (R$)',
+              data: [5736176.76, 4941341.50, 4972101.85, 5049575.25, 4691616.43, 3628588.94, 4021442.60, 3596652.34, 3695388.49, 3615973.01, 3784351.26, 4153080.53],
+              backgroundColor: 'rgba(79, 70, 229, 0.35)',
+              borderRadius: 4,
+              yAxisID: 'y'
+            },
+            {
+              type: 'line',
+              label: '% Comprometimento com Folha',
+              data: [10.7, 12.8, 12.8, 13.5, 13.7, 15.0, 13.8, 17.5, 15.5, 17.8, 20.5, 18.3],
+              borderColor: '#D97706',
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              pointRadius: 4,
+              pointBackgroundColor: '#D97706',
+              tension: 0.3,
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => 'R$ ' + (v/1000000).toFixed(1) + 'M' }
+            },
+            y1: {
+              position: 'right',
+              grid: { drawOnChartArea: false },
+              ticks: { callback: (v) => v + '%' }
+            }
+          }
+        }
+      });
+
+      // --- GRÁFICOS DA NOVA ABA "COMPARATIVO MENSAL POR ÁREA" ---
+      // A. Acumulado Total HE 2025 vs 2026
+      const ctxCompHE = document.getElementById('chartCompAcumuladoHE').getContext('2d');
+      charts.chartCompAcumuladoHE = new Chart(ctxCompHE, {
+        type: 'bar',
+        data: {
+          labels: ['Transporte', 'Logística', 'SG&A'],
+          datasets: [
+            {
+              label: 'Total HE 2025 (R$)',
+              data: [134834.66, 29825.63, 21839.96],
+              backgroundColor: 'rgba(148, 163, 184, 0.45)',
+              borderRadius: 4
+            },
+            {
+              label: 'Total HE 2026 (R$)',
+              data: [73627.38, 22863.06, 12601.06],
+              backgroundColor: [areaColors.transporte, areaColors.logistica, areaColors.sga],
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.dataset.label}: R$ ${c.raw.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => 'R$ ' + (v/1000).toFixed(0) + 'k' }
+            }
+          }
+        }
+      });
+
+      // B. Acumulado Per Capita Médio 2025 vs 2026
+      const ctxCompPC = document.getElementById('chartCompAcumuladoPC').getContext('2d');
+      charts.chartCompAcumuladoPC = new Chart(ctxCompPC, {
+        type: 'bar',
+        data: {
+          labels: ['Transporte (-26,65%)', 'Logística (+59,21%)', 'SG&A (-0,12%)'],
+          datasets: [
+            {
+              label: 'Per Capita Médio 2025 (R$)',
+              data: [438.30, 107.39, 192.92],
+              backgroundColor: 'rgba(148, 163, 184, 0.45)',
+              borderRadius: 4
+            },
+            {
+              label: 'Per Capita Médio 2026 (R$)',
+              data: [321.51, 170.98, 192.69],
+              backgroundColor: [areaColors.transporte, areaColors.logistica, areaColors.sga],
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.dataset.label}: R$ ${c.raw.toFixed(2).replace('.', ',')}`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => 'R$ ' + v }
+            }
+          }
+        }
+      });
+
+      // C. Comparativo Mensal Per Capita (Multi-line 2025 vs 2026)
+      const ctxCompMensalPC = document.getElementById('chartCompMensalPC').getContext('2d');
+      charts.chartCompMensalPC = new Chart(ctxCompMensalPC, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+          datasets: [
+            {
+              label: 'Transporte 2026 (R$)',
+              data: [509.53, 242.57, 200.71, 274.83, 312.91, 388.49],
+              borderColor: areaColors.transporte,
+              backgroundColor: 'transparent',
+              borderWidth: 2.2,
+              tension: 0.35,
+              pointRadius: 4,
+              pointBackgroundColor: areaColors.transporte
+            },
+            {
+              label: 'Transporte 2025 (R$)',
+              data: [497.88, 643.46, 417.46, 485.30, 328.09, 257.59],
+              borderColor: areaColors.transporte,
+              borderDash: [4, 4],
+              backgroundColor: 'transparent',
+              borderWidth: 1.5,
+              tension: 0.35,
+              pointRadius: 3
+            },
+            {
+              label: 'Logística 2026 (R$)',
+              data: [370.99, 174.09, 112.79, 178.36, 150.56, 39.06],
+              borderColor: areaColors.logistica,
+              backgroundColor: 'transparent',
+              borderWidth: 2.2,
+              tension: 0.35,
+              pointRadius: 4,
+              pointBackgroundColor: areaColors.logistica
+            },
+            {
+              label: 'Logística 2025 (R$)',
+              data: [116.06, 108.10, 118.87, 153.23, 62.29, 85.80],
+              borderColor: areaColors.logistica,
+              borderDash: [4, 4],
+              backgroundColor: 'transparent',
+              borderWidth: 1.5,
+              tension: 0.35,
+              pointRadius: 3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.dataset.label}: R$ ${c.raw.toFixed(2).replace('.', ',')}`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { color: theme.gridColor } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => 'R$ ' + v }
+            }
+          }
+        }
+      });
+
+      // D. Colaboradores com HE (2025 vs 2026)
+      const ctxCompColabs = document.getElementById('chartCompColabsHE').getContext('2d');
+      charts.chartCompColabsHE = new Chart(ctxCompColabs, {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+          datasets: [
+            {
+              label: 'Transporte 2025',
+              data: [45, 50, 49, 54, 60, 54],
+              backgroundColor: 'rgba(234, 88, 12, 0.35)',
+              borderRadius: 3
+            },
+            {
+              label: 'Transporte 2026',
+              data: [48, 39, 27, 40, 31, 35],
+              backgroundColor: areaColors.transporte,
+              borderRadius: 3
+            },
+            {
+              label: 'Logística 2025',
+              data: [45, 53, 52, 54, 42, 21],
+              backgroundColor: 'rgba(2, 132, 199, 0.35)',
+              borderRadius: 3
+            },
+            {
+              label: 'Logística 2026',
+              data: [24, 19, 24, 24, 22, 9],
+              backgroundColor: areaColors.logistica,
+              borderRadius: 3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => v + ' colabs' }
+            }
+          }
+        }
+      });
+
+      // --- DEMAIS GRÁFICOS JÁ EXISTENTES ---
+      // HE Per Capita Financeira
+      const ctxHEVal = document.getElementById('chartHEPerCapitaValor').getContext('2d');
+      charts.chartHEPerCapitaValor = new Chart(ctxHEVal, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+          datasets: [
+            {
+              label: 'Transporte (R$/colab)',
+              data: [509.53, 242.57, 200.71, 274.83, 312.91, 388.49],
+              borderColor: areaColors.transporte,
+              backgroundColor: 'rgba(234, 88, 12, 0.08)',
+              fill: true,
+              borderWidth: 2.2,
+              tension: 0.35,
+              pointRadius: 4,
+              pointBackgroundColor: areaColors.transporte
+            },
+            {
+              label: 'Logística (R$/colab)',
+              data: [370.99, 174.09, 112.79, 178.36, 150.56, 39.06],
+              borderColor: areaColors.logistica,
+              backgroundColor: 'transparent',
+              borderWidth: 2.2,
+              tension: 0.35,
+              pointRadius: 4,
+              pointBackgroundColor: areaColors.logistica
+            },
+            {
+              label: 'SG&A (R$/colab)',
+              data: [102.40, 335.28, 147.65, 179.12, 211.83, 179.88],
+              borderColor: areaColors.sga,
+              backgroundColor: 'transparent',
+              borderWidth: 2.2,
+              tension: 0.35,
+              pointRadius: 4,
+              pointBackgroundColor: areaColors.sga
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.dataset.label}: R$ ${c.raw.toFixed(2).replace('.', ',')}`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { color: theme.gridColor } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => 'R$ ' + v }
+            }
+          }
+        }
+      });
+
+      // HE Per Capita Horas
+      const ctxHEHrs = document.getElementById('chartHEPerCapitaHoras').getContext('2d');
+      charts.chartHEPerCapitaHoras = new Chart(ctxHEHrs, {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+          datasets: [
+            {
+              label: 'Transporte (h/colab)',
+              data: [18.08, 8.24, 5.21, 9.34, 9.76, 14.48],
+              backgroundColor: areaColors.transporte,
+              borderRadius: 4
+            },
+            {
+              label: 'Logística (h/colab)',
+              data: [13.57, 5.97, 3.77, 6.36, 5.00, 1.26],
+              backgroundColor: areaColors.logistica,
+              borderRadius: 4
+            },
+            {
+              label: 'SG&A (h/colab)',
+              data: [3.14, 9.96, 3.45, 3.94, 5.33, 4.13],
+              backgroundColor: areaColors.sga,
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.dataset.label}: ${c.raw.toFixed(2).replace('.', ',')} horas`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => v + ' h' }
+            }
+          }
+        }
+      });
+
+      // Horas Extras Qtd Volume
+      const ctx11 = document.getElementById('chartHEQtd').getContext('2d');
+      charts.chartHEQtd = new Chart(ctx11, {
+        type: 'bar',
+        data: {
+          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+          datasets: [
+            {
+              label: 'Horas Extras 2025 (Horas)',
+              data: [1360.93, 1783.77, 1117.78, 1302.08, 938.73, 633.25],
+              backgroundColor: 'rgba(148, 163, 184, 0.45)',
+              borderRadius: 4
+            },
+            {
+              label: 'Horas Extras 2026 (Horas)',
+              data: [1237.55, 544.36, 272.56, 569.62, 465.73, 555.35],
+              backgroundColor: '#059669',
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => v + ' h' }
+            }
+          }
+        }
+      });
+
+      // HE Setor Donut
+      const ctx12 = document.getElementById('chartHESetorDonut').getContext('2d');
+      charts.chartHESetorDonut = new Chart(ctx12, {
+        type: 'doughnut',
+        data: {
+          labels: ['Transporte (R$ 73,6k)', 'Logística (R$ 22,8k)', 'SG&A (R$ 12,6k)'],
+          datasets: [{
+            data: [73627.38, 22863.06, 12601.06],
+            backgroundColor: [areaColors.transporte, areaColors.logistica, areaColors.sga],
+            borderWidth: 0,
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '70%'
+        }
+      });
+
+      // Top Cargos HE
+      const ctx13 = document.getElementById('chartTopCargosHE').getContext('2d');
+      charts.chartTopCargosHE = new Chart(ctx13, {
+        type: 'bar',
+        data: {
+          labels: [
+            'Líder Operacional',
+            'Ajudante de Armazém',
+            'Encarregado Operacional',
+            'Conferente I',
+            'Líder de Transporte',
+            'Supervisor(a) Adm Financeiro',
+            'Analista de Relacionamento SR',
+            'Analista de Sistemas JR'
+          ],
+          datasets: [
+            {
+              label: 'Desembolso em HE (R$)',
+              data: [14787.47, 13781.25, 12412.86, 7828.74, 7718.88, 5585.44, 4404.12, 4337.97],
+              backgroundColor: areaColors.logistica,
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (c) => ` Valor: R$ ${c.raw.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => 'R$ ' + (v/1000).toFixed(0) + 'k' }
+            },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+
+      // Movimentação
+      const ctx14 = document.getElementById('chartMovimentacao').getContext('2d');
+      charts.chartMovimentacao = new Chart(ctx14, {
+        type: 'bar',
+        data: {
+          labels: ['Transporte', 'Logística', 'SG&A'],
+          datasets: [
+            {
+              label: 'Contratações (Admissões)',
+              data: [8, 6, 4],
+              backgroundColor: '#059669',
+              borderRadius: 4
+            },
+            {
+              label: 'Desligamentos (Demissões)',
+              data: [37, 5, 9],
+              backgroundColor: '#E11D48',
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { display: false } },
+            y: { grid: { color: theme.gridColor } }
+          }
+        }
+      });
+
+      // Motivos de Demissão
+      const ctx15 = document.getElementById('chartMotivosDemissao').getContext('2d');
+      charts.chartMotivosDemissao = new Chart(ctx15, {
+        type: 'doughnut',
+        data: {
+          labels: [
+            'Pedido de Demissão (21)',
+            'Dispensa Sem Justa Causa (23)',
+            'Término de Contrato (6)',
+            'Dispensa Com Justa Causa (4)',
+            'Quebra de Contrato (2)'
+          ],
+          datasets: [{
+            data: [21, 23, 6, 4, 2],
+            backgroundColor: [areaColors.logistica, areaColors.transporte, '#059669', '#E11D48', areaColors.sga],
+            borderWidth: 0,
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '68%'
+        }
+      });
+
+      // Custos Movimentação
+      const ctx16 = document.getElementById('chartCustosMovimentacao').getContext('2d');
+      charts.chartCustosMovimentacao = new Chart(ctx16, {
+        type: 'bar',
+        data: {
+          labels: ['Transporte', 'Logística', 'SG&A'],
+          datasets: [
+            {
+              label: 'Custo Admissões (R$)',
+              data: [38958.91, 20648.28, 16719.29],
+              backgroundColor: '#059669',
+              borderRadius: 4
+            },
+            {
+              label: 'Custo Rescisões (R$)',
+              data: [224183.81, 9810.68, 28657.33],
+              backgroundColor: '#E11D48',
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.dataset.label}: R$ ${c.raw.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => 'R$ ' + (v/1000).toFixed(0) + 'k' }
+            }
+          }
+        }
+      });
+
+      // Ticket Médio Movimentação
+      const ctx17 = document.getElementById('chartTicketMedioMov').getContext('2d');
+      charts.chartTicketMedioMov = new Chart(ctx17, {
+        type: 'bar',
+        data: {
+          labels: ['Transporte', 'Logística', 'SG&A'],
+          datasets: [
+            {
+              label: 'Custo Médio / Admissão (R$)',
+              data: [4869.86, 3441.38, 4179.82],
+              backgroundColor: areaColors.logistica,
+              borderRadius: 4
+            },
+            {
+              label: 'Custo Médio / Demissão (R$)',
+              data: [6059.02, 1962.14, 3184.15],
+              backgroundColor: areaColors.transporte,
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.dataset.label}: R$ ${c.raw.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => 'R$ ' + (v/1000).toFixed(1) + 'k' }
+            }
+          }
+        }
+      });
+
+      // Atestados Evolução
+      const ctx18 = document.getElementById('chartAtestadosEvolucao').getContext('2d');
+      charts.chartAtestadosEvolucao = new Chart(ctx18, {
+        type: 'line',
+        data: {
+          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+          datasets: [
+            {
+              label: 'Transporte (Dias)',
+              data: [57, 44, 50, 53, 43, 34],
+              borderColor: areaColors.transporte,
+              backgroundColor: 'rgba(234, 88, 12, 0.08)',
+              fill: true,
+              borderWidth: 2,
+              tension: 0.3
+            },
+            {
+              label: 'Logística (Dias)',
+              data: [5, 22, 2, 8, 4, 1],
+              borderColor: areaColors.logistica,
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              tension: 0.3
+            },
+            {
+              label: 'SG&A (Dias)',
+              data: [4, 3, 5, 3, 4, 4],
+              borderColor: areaColors.sga,
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              tension: 0.3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: theme.gridColor } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => v + ' dias' }
+            }
+          }
+        }
+      });
+
+      // Faltas Evolução
+      const ctx19 = document.getElementById('chartFaltasEvolucao').getContext('2d');
+      charts.chartFaltasEvolucao = new Chart(ctx19, {
+        type: 'bar',
+        data: {
+          labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+          datasets: [
+            {
+              label: 'Transporte',
+              data: [35, 25, 28, 37, 14, 14],
+              backgroundColor: areaColors.transporte,
+              stack: 'faltas'
+            },
+            {
+              label: 'Logística',
+              data: [1, 1, 1, 0, 0, 1],
+              backgroundColor: areaColors.logistica,
+              stack: 'faltas'
+            },
+            {
+              label: 'SG&A',
+              data: [1, 1, 25, 0, 0, 0],
+              backgroundColor: areaColors.sga,
+              stack: 'faltas'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => v + ' faltas' }
+            }
+          }
+        }
+      });
+
+      // Passivo por Área
+      const ctx20 = document.getElementById('chartPassivoArea').getContext('2d');
+      charts.chartPassivoArea = new Chart(ctx20, {
+        type: 'bar',
+        data: {
+          labels: ['Transporte', 'Logística', 'SG&A'],
+          datasets: [
+            {
+              label: 'Valor Causa Pleiteado (R$)',
+              data: [601949.35, 633217.96, 132748.46],
+              backgroundColor: 'rgba(225, 29, 72, 0.45)',
+              borderRadius: 4
+            },
+            {
+              label: 'Sentença Fixada / Acordo (R$)',
+              data: [92733.40, 28277.24, 22000.00],
+              backgroundColor: '#059669',
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.dataset.label}: R$ ${c.raw.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: {
+              grid: { color: theme.gridColor },
+              ticks: { callback: (v) => 'R$ ' + (v/1000).toFixed(0) + 'k' }
+            }
+          }
+        }
+      });
+
+      // Pleitos Frequência
+      const ctx21 = document.getElementById('chartPleitosFrequencia').getContext('2d');
+      charts.chartPleitosFrequencia = new Chart(ctx21, {
+        type: 'bar',
+        data: {
+          labels: [
+            'Horas Extras / Intrajornada',
+            'Dano e Assédio Moral',
+            'Desvio / Acúmulo de Função',
+            'Insalubridade / Periculosidade',
+            'Vínculo CLT / Admissão Retroativa',
+            'FGTS em Atraso / Multas',
+            'Rescisão Indireta'
+          ],
+          datasets: [
+            {
+              label: 'Qtd de Processos com o Pleito',
+              data: [19, 16, 12, 10, 6, 6, 4],
+              backgroundColor: areaColors.transporte,
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { color: theme.gridColor } },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // Dynamic Color Refresh across all Charts
+    function refreshAllChartsColors() {
+      if (charts.chartFolhaEvolucao) {
+        charts.chartFolhaEvolucao.data.datasets[0].borderColor = areaColors.sga;
+        charts.chartFolhaEvolucao.data.datasets[1].borderColor = areaColors.logistica;
+        charts.chartFolhaEvolucao.data.datasets[1].pointBackgroundColor = areaColors.logistica;
+        charts.chartFolhaEvolucao.update();
+      }
+      if (charts.chartFolhaAreaDonut) {
+        charts.chartFolhaAreaDonut.data.datasets[0].backgroundColor = [areaColors.transporte, areaColors.sga, areaColors.logistica];
+        charts.chartFolhaAreaDonut.update();
+      }
+      if (charts.chartHCDiff) {
+        charts.chartHCDiff.data.datasets[1].backgroundColor = [areaColors.transporte, areaColors.logistica, areaColors.sga];
+        charts.chartHCDiff.update();
+      }
+      if (charts.chartFolhaPorArea) {
+        charts.chartFolhaPorArea.data.datasets[1].backgroundColor = [areaColors.transporte, areaColors.logistica, areaColors.sga];
+        charts.chartFolhaPorArea.update();
+      }
+      if (charts.chartFolhaStacked26) {
+        charts.chartFolhaStacked26.data.datasets[0].backgroundColor = areaColors.transporte;
+        charts.chartFolhaStacked26.data.datasets[1].backgroundColor = areaColors.logistica;
+        charts.chartFolhaStacked26.data.datasets[2].backgroundColor = areaColors.sga;
+        charts.chartFolhaStacked26.update();
+      }
+      // Novas abas
+      if (charts.chartCompAcumuladoHE) {
+        charts.chartCompAcumuladoHE.data.datasets[1].backgroundColor = [areaColors.transporte, areaColors.logistica, areaColors.sga];
+        charts.chartCompAcumuladoHE.update();
+      }
+      if (charts.chartCompAcumuladoPC) {
+        charts.chartCompAcumuladoPC.data.datasets[1].backgroundColor = [areaColors.transporte, areaColors.logistica, areaColors.sga];
+        charts.chartCompAcumuladoPC.update();
+      }
+      if (charts.chartCompMensalPC) {
+        charts.chartCompMensalPC.data.datasets[0].borderColor = areaColors.transporte;
+        charts.chartCompMensalPC.data.datasets[0].pointBackgroundColor = areaColors.transporte;
+        charts.chartCompMensalPC.data.datasets[1].borderColor = areaColors.transporte;
+        charts.chartCompMensalPC.data.datasets[2].borderColor = areaColors.logistica;
+        charts.chartCompMensalPC.data.datasets[2].pointBackgroundColor = areaColors.logistica;
+        charts.chartCompMensalPC.data.datasets[3].borderColor = areaColors.logistica;
+        charts.chartCompMensalPC.update();
+      }
+      if (charts.chartCompColabsHE) {
+        charts.chartCompColabsHE.data.datasets[1].backgroundColor = areaColors.transporte;
+        charts.chartCompColabsHE.data.datasets[3].backgroundColor = areaColors.logistica;
+        charts.chartCompColabsHE.update();
+      }
+      // HE Tab
+      if (charts.chartHEPerCapitaValor) {
+        charts.chartHEPerCapitaValor.data.datasets[0].borderColor = areaColors.transporte;
+        charts.chartHEPerCapitaValor.data.datasets[0].pointBackgroundColor = areaColors.transporte;
+        charts.chartHEPerCapitaValor.data.datasets[1].borderColor = areaColors.logistica;
+        charts.chartHEPerCapitaValor.data.datasets[1].pointBackgroundColor = areaColors.logistica;
+        charts.chartHEPerCapitaValor.data.datasets[2].borderColor = areaColors.sga;
+        charts.chartHEPerCapitaValor.data.datasets[2].pointBackgroundColor = areaColors.sga;
+        charts.chartHEPerCapitaValor.update();
+      }
+      if (charts.chartHEPerCapitaHoras) {
+        charts.chartHEPerCapitaHoras.data.datasets[0].backgroundColor = areaColors.transporte;
+        charts.chartHEPerCapitaHoras.data.datasets[1].backgroundColor = areaColors.logistica;
+        charts.chartHEPerCapitaHoras.data.datasets[2].backgroundColor = areaColors.sga;
+        charts.chartHEPerCapitaHoras.update();
+      }
+      if (charts.chartHESetorDonut) {
+        charts.chartHESetorDonut.data.datasets[0].backgroundColor = [areaColors.transporte, areaColors.logistica, areaColors.sga];
+        charts.chartHESetorDonut.update();
+      }
+      if (charts.chartTopCargosHE) {
+        charts.chartTopCargosHE.data.datasets[0].backgroundColor = areaColors.logistica;
+        charts.chartTopCargosHE.update();
+      }
+      if (charts.chartTicketMedioMov) {
+        charts.chartTicketMedioMov.data.datasets[0].backgroundColor = areaColors.logistica;
+        charts.chartTicketMedioMov.data.datasets[1].backgroundColor = areaColors.transporte;
+        charts.chartTicketMedioMov.update();
+      }
+      if (charts.chartAtestadosEvolucao) {
+        charts.chartAtestadosEvolucao.data.datasets[0].borderColor = areaColors.transporte;
+        charts.chartAtestadosEvolucao.data.datasets[1].borderColor = areaColors.logistica;
+        charts.chartAtestadosEvolucao.data.datasets[2].borderColor = areaColors.sga;
+        charts.chartAtestadosEvolucao.update();
+      }
+      if (charts.chartFaltasEvolucao) {
+        charts.chartFaltasEvolucao.data.datasets[0].backgroundColor = areaColors.transporte;
+        charts.chartFaltasEvolucao.data.datasets[1].backgroundColor = areaColors.logistica;
+        charts.chartFaltasEvolucao.data.datasets[2].backgroundColor = areaColors.sga;
+        charts.chartFaltasEvolucao.update();
+      }
+      if (charts.chartPleitosFrequencia) {
+        charts.chartPleitosFrequencia.data.datasets[0].backgroundColor = areaColors.transporte;
+        charts.chartPleitosFrequencia.update();
+      }
+    }
+
+    function updateChartColors() {
+      const theme = getChartTheme();
+      Chart.defaults.color = theme.textColor;
+      for (let key in charts) {
+        if (charts[key]) {
+          if (charts[key].options.scales) {
+            if (charts[key].options.scales.x) charts[key].options.scales.x.grid.color = theme.gridColor;
+            if (charts[key].options.scales.y) charts[key].options.scales.y.grid.color = theme.gridColor;
+          }
+          charts[key].update();
+        }
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSavedTextEdits();
+      initCharts();
+    });
+  </script>
+</body>
+</html>
