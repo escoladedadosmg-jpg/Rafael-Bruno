@@ -1,0 +1,3164 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MINDLOG | Painel Executivo de Gestão de Pessoas & Folha - 1º Semestre 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Chart.js e SheetJS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --bg-primary: #F4F6F9;
+      --bg-secondary: #FFFFFF;
+      --bg-card: rgba(255, 255, 255, 0.94);
+      --bg-card-hover: #FFFFFF;
+      --border-color: rgba(15, 23, 42, 0.09);
+      --border-subtle: rgba(15, 23, 42, 0.05);
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #94A3B8;
+      
+      --color-transporte: #EA580C;
+      --color-transporte-soft: rgba(234, 88, 12, 0.14);
+      --color-logistica: #0284C7;
+      --color-logistica-soft: rgba(2, 132, 199, 0.14);
+      --color-sga: #64748B;
+      --color-sga-soft: rgba(100, 116, 139, 0.14);
+      --color-enfok: #7C3AED;
+      --color-enfok-soft: rgba(124, 58, 237, 0.14);
+      
+      --accent-blue: #0284C7;
+      --accent-emerald: #059669;
+      --accent-amber: #D97706;
+      --accent-rose: #E11D48;
+      
+      --card-glow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+      --chart-grid: rgba(0, 0, 0, 0.05);
+      --chart-text: #64748B;
+      --btn-bg: #F8FAFC;
+      --btn-hover: #EEF2F6;
+      --edit-outline: 2px dashed #0284C7;
+      
+      --callout-bg: linear-gradient(135deg, rgba(234, 88, 12, 0.06) 0%, rgba(2, 132, 199, 0.06) 100%);
+      --callout-border: rgba(234, 88, 12, 0.35);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #090D16;
+      --bg-secondary: #0F172A;
+      --bg-card: rgba(15, 23, 42, 0.78);
+      --bg-card-hover: rgba(30, 41, 59, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-subtle: rgba(255, 255, 255, 0.04);
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      
+      --color-transporte: #F97316;
+      --color-transporte-soft: rgba(249, 115, 22, 0.18);
+      --color-logistica: #38BDF8;
+      --color-logistica-soft: rgba(56, 189, 248, 0.18);
+      --color-sga: #94A3B8;
+      --color-sga-soft: rgba(148, 163, 184, 0.18);
+      --color-enfok: #A78BFA;
+      --color-enfok-soft: rgba(167, 139, 250, 0.18);
+      
+      --accent-blue: #38BDF8;
+      --accent-emerald: #10B981;
+      --accent-amber: #F59E0B;
+      --accent-rose: #F43F5E;
+      
+      --card-glow: 0 12px 36px 0 rgba(0, 0, 0, 0.37);
+      --chart-grid: rgba(255, 255, 255, 0.05);
+      --chart-text: #94A3B8;
+      --btn-bg: rgba(255, 255, 255, 0.04);
+      --btn-hover: rgba(255, 255, 255, 0.08);
+      --edit-outline: 2px dashed #38BDF8;
+      
+      --callout-bg: linear-gradient(135deg, rgba(249, 115, 22, 0.12) 0%, rgba(56, 189, 248, 0.12) 100%);
+      --callout-border: rgba(249, 115, 22, 0.45);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      font-weight: 300;
+      line-height: 1.5;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1780px;
+      margin: 0 auto;
+      padding: 24px 32px 40px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 14px;
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .header-logo-img {
+      height: 82px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    .header-titles { display: flex; flex-direction: column; gap: 4px; }
+    .company-tag { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-logistica); }
+    .header-title { font-size: 1.60rem; font-weight: 300; letter-spacing: -0.02em; color: var(--text-primary); }
+    .header-title strong { font-weight: 600; }
+    .header-subtitle { font-size: 0.82rem; font-weight: 300; color: var(--text-secondary); letter-spacing: 0.02em; }
+    .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--accent-emerald);
+      box-shadow: 0 0 10px var(--accent-emerald);
+    }
+    .status-dot.empty { background-color: var(--text-muted); box-shadow: none; }
+
+    .header-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 7px 15px;
+      border-radius: 8px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-btn:hover { border-color: var(--color-logistica); color: var(--color-logistica); }
+    .header-btn.btn-tour { background: var(--color-enfok-soft); border-color: var(--color-enfok); color: var(--color-enfok); font-weight: 600; }
+    .header-btn.btn-primary { background: var(--color-logistica); border-color: var(--color-logistica); color: #FFFFFF; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25); }
+    .header-btn.btn-accent { background: var(--btn-bg); border-color: var(--color-transporte); color: var(--color-transporte); }
+
+    .icon-silhouette { display: inline-flex; align-items: center; justify-content: center; opacity: 0.75; color: currentColor; }
+
+    /* MONTH FILTER TOOLBAR */
+    .filter-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      box-shadow: var(--card-glow);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .filter-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .filter-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); }
+
+    .filter-select {
+      background: var(--btn-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .filter-pill-btn {
+      padding: 5px 12px;
+      background: var(--btn-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .filter-pill-btn:hover { border-color: var(--color-logistica); color: var(--color-logistica); }
+    .filter-pill-btn.active { background: var(--color-logistica); border-color: var(--color-logistica); color: #FFFFFF; }
+    .filter-indicator { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text-muted); }
+    .filter-indicator strong { color: var(--color-transporte); }
+
+    /* NAVIGATION TABS */
+    .tabs-nav-wrapper { display: flex; flex-direction: column; gap: 4px; }
+    .tabs-nav-hint { font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); letter-spacing: 0.05em; }
+    .tabs-nav { display: flex; gap: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; overflow-x: auto; user-select: none; }
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .tab-btn:hover { color: var(--text-primary); background: var(--bg-secondary); }
+    .tab-btn.active { color: var(--color-logistica); background: var(--bg-secondary); border-color: var(--border-color); font-weight: 500; }
+
+    /* CALLOUT CARD */
+    .executive-callout {
+      background: var(--callout-bg);
+      border: 1px solid var(--callout-border);
+      border-left: 4px solid var(--color-transporte);
+      border-radius: 10px;
+      padding: 18px 24px;
+      box-shadow: var(--card-glow);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .callout-header { display: flex; justify-content: space-between; align-items: center; }
+    .callout-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-transporte); }
+    .callout-source { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); }
+    .callout-text { font-size: 0.94rem; font-weight: 400; color: var(--text-primary); line-height: 1.6; }
+
+    /* KPI GRID */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: var(--card-glow);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px; }
+    .kpi-card.accent-blue::before { background: linear-gradient(90deg, transparent, var(--color-logistica), transparent); }
+    .kpi-card.accent-emerald::before { background: linear-gradient(90deg, transparent, var(--accent-emerald), transparent); }
+    .kpi-card.accent-amber::before { background: linear-gradient(90deg, transparent, var(--color-transporte), transparent); }
+    .kpi-card.accent-sga::before { background: linear-gradient(90deg, transparent, var(--color-sga), transparent); }
+    .kpi-card.accent-rose::before { background: linear-gradient(90deg, transparent, var(--accent-rose), transparent); }
+
+    .kpi-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .kpi-title { font-size: 0.70rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+    .kpi-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; padding: 2px 6px; border-radius: 4px; background: var(--btn-bg); border: 1px solid var(--border-color); color: var(--text-muted); }
+    .kpi-value { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.55rem; font-weight: 300; letter-spacing: -0.03em; color: var(--text-primary); margin-bottom: 6px; }
+    .kpi-value .unit { font-size: 0.90rem; font-weight: 300; color: var(--text-secondary); margin-right: 2px; }
+    .kpi-footer { display: flex; align-items: center; justify-content: space-between; font-size: 0.70rem; color: var(--text-secondary); padding-top: 8px; border-top: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 4px; }
+
+    .trend-indicator { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 0.70rem; }
+    .trend-positive { color: var(--accent-emerald); }
+    .trend-negative { color: var(--accent-rose); }
+    .trend-neutral { color: var(--color-logistica); }
+
+    /* SECTIONS & GRIDS */
+    .tab-pane { display: none; flex-direction: column; gap: 20px; }
+    .tab-pane.active { display: flex; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: var(--card-glow);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 8px; }
+    .card-title-group { display: flex; flex-direction: column; gap: 2px; }
+    .card-title { font-size: 0.88rem; font-weight: 500; letter-spacing: 0.04em; color: var(--text-primary); text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+    .card-subtitle { font-size: 0.72rem; font-weight: 300; color: var(--text-muted); letter-spacing: 0.02em; }
+    .card-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+    .ctrl-btn {
+      background: var(--btn-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.70rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ctrl-btn:hover { border-color: var(--color-logistica); color: var(--color-logistica); background: var(--btn-hover); }
+    .ctrl-btn.active { background: var(--color-logistica); border-color: var(--color-logistica); color: #FFFFFF; }
+    .card-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; padding: 3px 8px; border-radius: 4px; background: var(--btn-bg); border: 1px solid var(--border-color); color: var(--text-secondary); }
+
+    .chart-container { position: relative; width: 100%; height: 320px; }
+    .chart-container-sm { position: relative; width: 100%; height: 250px; }
+
+    /* DATA TABLES */
+    .table-container { width: 100%; overflow-x: auto; }
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 0.76rem; text-align: left; }
+    table.data-table th { padding: 10px 14px; font-weight: 400; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid var(--border-color); background: var(--btn-bg); white-space: nowrap; }
+    table.data-table td { padding: 12px 14px; font-weight: 300; color: var(--text-primary); border-bottom: 1px solid var(--border-subtle); white-space: nowrap; }
+    table.data-table tr:hover td { background: var(--btn-bg); }
+    tr.highlighted-month td { background: rgba(2, 132, 199, 0.08) !important; font-weight: 500; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    .tag-pill { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.68rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em; }
+    .tag-transporte { background: var(--color-transporte-soft); color: var(--color-transporte); font-weight: 500; }
+    .tag-logistica { background: var(--color-logistica-soft); color: var(--color-logistica); font-weight: 500; }
+    .tag-sga { background: var(--color-sga-soft); color: var(--color-sga); font-weight: 500; }
+    .tag-enfok { background: var(--color-enfok-soft); color: var(--color-enfok); font-weight: 500; }
+    .tag-emerald { background: rgba(5, 150, 105, 0.12); color: var(--accent-emerald); }
+    .tag-amber { background: rgba(217, 119, 6, 0.12); color: var(--accent-amber); }
+    .tag-rose { background: rgba(225, 29, 72, 0.12); color: var(--accent-rose); }
+
+    /* STATUS SELECT INTERATIVO */
+    .status-select {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.70rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .status-select.status-finalizado, .status-select.status-vigencia { background: rgba(5, 150, 105, 0.12); color: var(--accent-emerald); border-color: rgba(5, 150, 105, 0.35); }
+    .status-select.status-aguardando, .status-select.status-andamento { background: rgba(217, 119, 6, 0.12); color: var(--accent-amber); border-color: rgba(217, 119, 6, 0.35); }
+    .status-select.status-arquivado, .status-select.status-encerrado { background: rgba(100, 116, 139, 0.15); color: var(--color-sga); border-color: rgba(100, 116, 139, 0.35); }
+    .status-select.status-recorrendo, .status-select.status-retorno { background: rgba(2, 132, 199, 0.12); color: var(--color-logistica); border-color: rgba(2, 132, 199, 0.35); }
+
+    /* SUMMARY STATS STRIP */
+    .stat-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .stat-box { padding: 12px 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; display: flex; flex-direction: column; gap: 4px; }
+    .stat-label { font-size: 0.65rem; font-weight: 400; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); }
+    .stat-val { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 400; color: var(--text-primary); }
+
+    .table-filter-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    .table-filter-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .table-filter-btn { padding: 4px 10px; background: var(--btn-bg); border: 1px solid var(--border-color); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; cursor: pointer; color: var(--text-secondary); }
+    .table-filter-btn.active { background: var(--color-logistica); border-color: var(--color-logistica); color: #FFFFFF; }
+
+    /* CENÁRIO CARD */
+    .scenario-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--card-glow);
+    }
+
+    .scenario-header-banner {
+      background: #E86C2D;
+      color: #FFFFFF;
+      padding: 10px 18px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .scenario-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .scenario-kpis {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .scenario-kpi-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+    }
+
+    .scenario-kpi-label { font-weight: 600; text-transform: uppercase; color: var(--text-secondary); }
+    .scenario-kpi-val { font-family: 'JetBrains Mono', monospace; font-weight: 500; color: var(--text-primary); font-size: 1.05rem; }
+
+    /* EDIT MODE BANNER */
+    .edit-banner { display: none; align-items: center; justify-content: space-between; padding: 10px 18px; background: rgba(2, 132, 199, 0.1); border: 1px solid var(--color-logistica); border-radius: 8px; font-size: 0.76rem; color: var(--text-primary); }
+    .edit-banner.visible { display: flex; }
+    .editable-element[contenteditable="true"] { outline: var(--edit-outline); outline-offset: 3px; border-radius: 4px; background-color: rgba(2, 132, 199, 0.06); cursor: text; }
+
+    /* TOAST NOTIFICATION */
+    .toast-notification { position: fixed; bottom: 24px; right: 24px; background: var(--bg-secondary); border: 1px solid var(--accent-emerald); border-left: 4px solid var(--accent-emerald); padding: 14px 20px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); font-size: 0.82rem; color: var(--text-primary); z-index: 100000; display: flex; align-items: center; gap: 12px; transform: translateY(100px); opacity: 0; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; }
+    .toast-notification.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+
+    /* TOUR GUIADO */
+    .tour-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(9, 13, 22, 0.72); backdrop-filter: blur(3px); z-index: 99998; }
+    .tour-backdrop.active { display: block; }
+    .tour-highlight { position: relative; z-index: 99999 !important; box-shadow: 0 0 0 3px var(--color-enfok), 0 0 25px rgba(124, 58, 237, 0.45) !important; border-radius: 10px; background: var(--bg-secondary) !important; }
+    .tour-popover { display: none; position: fixed; bottom: 30px; right: 30px; z-index: 100000; max-width: 480px; width: calc(100% - 60px); background: var(--bg-secondary); border: 1px solid var(--color-enfok); border-radius: 12px; padding: 24px; box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45); flex-direction: column; gap: 12px; }
+    .tour-popover.active { display: flex; }
+    .tour-header { display: flex; justify-content: space-between; align-items: center; }
+    .tour-step-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: 600; padding: 3px 8px; border-radius: 4px; background: var(--color-enfok-soft); color: var(--color-enfok); text-transform: uppercase; }
+    .tour-close-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-family: 'JetBrains Mono', monospace; }
+    .tour-title { font-size: 1.05rem; font-weight: 600; color: var(--text-primary); }
+    .tour-body { font-size: 0.84rem; font-weight: 300; color: var(--text-secondary); line-height: 1.6; }
+    .tour-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border-subtle); margin-top: 6px; flex-wrap: wrap; gap: 8px; }
+
+    /* MODAIS */
+    .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center; }
+    .modal-backdrop.open { display: flex; }
+    .modal-box { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 28px; max-width: 720px; width: 94%; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; gap: 18px; max-height: 90vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; }
+    .modal-title { font-size: 1.05rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-primary); }
+    .modal-close { background: transparent; border: none; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; font-family: 'JetBrains Mono', monospace; }
+
+    .upload-section-grid { display: flex; flex-direction: column; gap: 14px; }
+    .upload-card-slot { border: 1px solid var(--border-color); border-radius: 10px; padding: 16px 20px; background: var(--btn-bg); display: flex; flex-direction: column; gap: 10px; }
+    .upload-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+    .upload-card-title { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); text-transform: uppercase; }
+    .upload-card-desc { font-size: 0.72rem; font-weight: 300; color: var(--text-muted); }
+    .upload-card-status { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; padding: 3px 8px; border-radius: 4px; background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-muted); }
+    .upload-card-status.loaded { background: rgba(5, 150, 105, 0.12); border-color: rgba(5, 150, 105, 0.35); color: var(--accent-emerald); font-weight: 500; }
+    .upload-card-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .upload-slot-btn { background: var(--bg-secondary); border: 1px solid var(--color-logistica); color: var(--color-logistica); padding: 7px 14px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 600; cursor: pointer; text-transform: uppercase; }
+    .upload-slot-btn:hover { background: var(--color-logistica); color: #FFFFFF; }
+    .upload-file-info { font-family: 'JetBrains Mono', monospace; font-size: 0.70rem; color: var(--text-secondary); }
+
+    .color-picker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .color-item { display: flex; flex-direction: column; gap: 8px; padding: 14px; background: var(--btn-bg); border: 1px solid var(--border-color); border-radius: 8px; }
+    .modal-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-top: 14px; border-top: 1px solid var(--border-subtle); flex-wrap: wrap; }
+
+    @media (max-width: 1200px) { .grid-2, .grid-3, .color-picker-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <!-- TOUR OVERLAYS -->
+  <div class="tour-backdrop" id="tourBackdrop"></div>
+  <div class="tour-popover" id="tourPopover">
+    <div class="tour-header">
+      <span class="tour-step-badge" id="tourStepBadge">ETAPA 1 DE 6</span>
+      <button class="tour-close-btn" onclick="endTour()">[FECHAR]</button>
+    </div>
+    <h3 class="tour-title" id="tourTitle">Título</h3>
+    <p class="tour-body" id="tourBody">Texto explicativo.</p>
+    <div class="tour-footer">
+      <label style="font-size: 0.72rem; color: var(--text-muted); cursor: pointer;">
+        <input type="checkbox" id="tourDontShowAgain"> Não exibir automaticamente
+      </label>
+      <div style="display: flex; gap: 8px;">
+        <button class="ctrl-btn" id="tourPrevBtn" onclick="prevTourStep()">Anterior</button>
+        <button class="ctrl-btn active" id="tourNextBtn" onclick="nextTourStep()">Próximo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <!-- HEADER COM IMAGEM DE LOGO MINDLOG AMPLIADA -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo-container">
+          <img src="logo.jpg" onerror="this.src='logo.jpeg'" alt="Mindlog" class="header-logo-img">
+        </div>
+        <div class="header-titles">
+          <span class="company-tag editable-element" id="txt-company">Mindlog Soluções Inteligentes — Diretoria Executiva</span>
+          <h1 class="header-title editable-element" id="txt-main-title">Relatório de Gestão Estratégica de <strong>Pessoas & Folha</strong></h1>
+          <p class="header-subtitle editable-element" id="txt-sub-title">Performance Consolidada 1º Semestre 2026 vs 2025 | Mtz Embu e Filiais</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="header-btn btn-tour" onclick="startTour(true)">Tour de Novidades</button>
+        <div class="status-badge" id="dataAuditBadge">
+          <div class="status-dot" id="statusDotIndicator"></div>
+          <span class="editable-element" id="txt-badge">Base Auditada — 1S 2026</span>
+        </div>
+        <button class="header-btn btn-primary" onclick="openUploadModal()">Importar Planilhas</button>
+        <button class="header-btn btn-accent" onclick="toggleEditMode(this)" id="editModeBtn">Editar Textos</button>
+        <button class="header-btn" onclick="openColorModal()">Cores</button>
+        <button class="header-btn" onclick="toggleAllLabels(this)" id="globalLabelsBtn">Rótulos</button>
+        <button class="header-btn" onclick="toggleTheme()" id="themeBtn">Modo Escuro</button>
+      </div>
+    </header>
+
+    <!-- MONTH FILTER TOOLBAR -->
+    <div class="filter-toolbar" id="filterToolbarTarget">
+      <div class="filter-left">
+        <span class="filter-label editable-element" id="lbl-filtro-periodo">Filtro por Período:</span>
+        <select id="monthSelect" class="filter-select" onchange="applyMonthFilter(this.value)">
+          <option value="all" selected>1º Semestre Consolidado (Jan - Jun)</option>
+          <option value="Jan">Janeiro / 2026</option>
+          <option value="Fev">Fevereiro / 2026</option>
+          <option value="Mar">Março / 2026</option>
+          <option value="Abr">Abril / 2026</option>
+          <option value="Mai">Maio / 2026</option>
+          <option value="Jun">Junho / 2026</option>
+        </select>
+        <div class="filter-pills">
+          <button class="filter-pill-btn active" data-filter="all" onclick="setMonthFilter('all')">Todos</button>
+          <button class="filter-pill-btn" data-filter="Jan" onclick="setMonthFilter('Jan')">Jan</button>
+          <button class="filter-pill-btn" data-filter="Fev" onclick="setMonthFilter('Fev')">Fev</button>
+          <button class="filter-pill-btn" data-filter="Mar" onclick="setMonthFilter('Mar')">Mar</button>
+          <button class="filter-pill-btn" data-filter="Abr" onclick="setMonthFilter('Abr')">Abr</button>
+          <button class="filter-pill-btn" data-filter="Mai" onclick="setMonthFilter('Mai')">Mai</button>
+          <button class="filter-pill-btn" data-filter="Jun" onclick="setMonthFilter('Jun')">Jun</button>
+        </div>
+      </div>
+      <div class="filter-indicator" id="filterStatusText">
+        Exibindo: <strong>Consolidado 1º Semestre 2026</strong>
+      </div>
+    </div>
+
+    <!-- EDIT MODE BANNER -->
+    <div class="edit-banner" id="editBanner">
+      <div>
+        <strong>Modo de Edição Total Ativado:</strong> Clique em qualquer texto ou título para renomear.
+      </div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="ctrl-btn active" onclick="saveTextEdits()">Salvar Alterações</button>
+        <button class="ctrl-btn" onclick="resetAllLabelOffsets()">Resetar Rótulos</button>
+        <button class="ctrl-btn" onclick="resetTextEdits()">Restaurar Nomes</button>
+      </div>
+    </div>
+
+    <!-- NAVIGATION TABS -->
+    <div class="tabs-nav-wrapper">
+      <div class="tabs-nav-hint">Clique nas abas para navegar pelos módulos de análise</div>
+      <nav class="tabs-nav" id="tabsNavContainer">
+        <button class="tab-btn active editable-element" id="tab-btn-1" onclick="switchTab(event, 'tab-visao-geral')">Visão Executiva</button>
+        <button class="tab-btn editable-element" id="tab-btn-2" onclick="switchTab(event, 'tab-folha')">Custo de Folha & Terceirização</button>
+        <button class="tab-btn editable-element" id="tab-btn-ferias" onclick="switchTab(event, 'tab-ferias')" style="color:var(--accent-emerald); font-weight: 500;">Gestão & Custo de Férias</button>
+        <button class="tab-btn editable-element" id="tab-btn-3" onclick="switchTab(event, 'tab-he')" style="color:var(--color-transporte); font-weight: 500;">Horas Extras & Eficiência</button>
+        <button class="tab-btn editable-element" id="tab-btn-4" onclick="switchTab(event, 'tab-headcount')">Headcount & Movimentação</button>
+        <button class="tab-btn editable-element" id="tab-btn-5" onclick="switchTab(event, 'tab-absenteismo')">Absenteísmo & Afastamentos</button>
+        <button class="tab-btn editable-element" id="tab-btn-6" onclick="switchTab(event, 'tab-juridico')">Passivo Trabalhista & Riscos</button>
+      </nav>
+    </div>
+
+    <!-- EXECUTIVE KPI RIBBON -->
+    <section class="kpi-grid" id="kpiRibbonGridTarget">
+      <!-- 1. Folha Total -->
+      <div class="kpi-card accent-blue">
+        <div class="kpi-header">
+          <span class="kpi-title editable-element" id="kpi-t-1">
+            <span class="icon-silhouette"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/></svg></span>
+            Custo Total Folha (CLT)
+          </span>
+          <span class="kpi-tag editable-element" id="kpi-tag-1">1S 2026</span>
+        </div>
+        <div class="kpi-value" id="kpi-val-folha"><span class="unit">R$</span> 4.062.133,53</div>
+        <div class="kpi-footer">
+          <span class="editable-element" id="kpi-f-1">vs R$ 5.013.722,20 em 2025</span>
+          <span class="trend-indicator trend-positive" id="kpi-trend-folha">-18,98%</span>
+        </div>
+      </div>
+
+      <!-- 2. Faturamento Bruto Auditado -->
+      <div class="kpi-card accent-blue" id="kpiFatCardTarget">
+        <div class="kpi-header">
+          <span class="kpi-title editable-element" id="kpi-t-fat">
+            <span class="icon-silhouette"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
+            Faturamento Bruto
+          </span>
+          <span class="kpi-tag editable-element" id="kpi-tag-fat">RECEITA 1S26</span>
+        </div>
+        <div class="kpi-value" id="kpi-val-fat"><span class="unit">R$</span> 38.009.523,14</div>
+        <div class="kpi-footer">
+          <span class="editable-element" id="kpi-f-fat">Comprometimento Folha CLT</span>
+          <span class="trend-indicator trend-positive" id="kpi-trend-fat">10,69%</span>
+        </div>
+      </div>
+
+      <!-- 3. Horas Extras -->
+      <div class="kpi-card accent-emerald">
+        <div class="kpi-header">
+          <span class="kpi-title editable-element" id="kpi-t-2">
+            <span class="icon-silhouette"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+            Horas Extras
+          </span>
+          <span class="kpi-tag editable-element" id="kpi-tag-2">DESEMBOLSO</span>
+        </div>
+        <div class="kpi-value" id="kpi-val-he"><span class="unit">R$</span> 109.091,50</div>
+        <div class="kpi-footer">
+          <span class="editable-element" id="kpi-f-2">vs R$ 186.500,25 em 2025</span>
+          <span class="trend-indicator trend-positive" id="kpi-trend-he">-41,51%</span>
+        </div>
+      </div>
+
+      <!-- 4. HE Per Capita -->
+      <div class="kpi-card accent-amber">
+        <div class="kpi-header">
+          <span class="kpi-title editable-element" id="kpi-t-3">
+            <span class="icon-silhouette"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+            HE Per Capita
+          </span>
+          <span class="kpi-tag editable-element" id="kpi-tag-3">MÉDIA / COLAB</span>
+        </div>
+        <div class="kpi-value" id="kpi-val-hepc"><span class="unit">R$</span> 228,39 <span class="unit" style="font-size:0.85rem;">/ colab</span></div>
+        <div class="kpi-footer">
+          <span class="editable-element" id="kpi-f-3">vs R$ 246,20 em 2025</span>
+          <span class="trend-indicator trend-positive" id="kpi-trend-hepc">-7,23%</span>
+        </div>
+      </div>
+
+      <!-- 5. Headcount Ativo -->
+      <div class="kpi-card accent-sga" id="kpiHeadcountTarget">
+        <div class="kpi-header">
+          <span class="kpi-title editable-element" id="kpi-t-4">
+            <span class="icon-silhouette"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+            Headcount Ativo
+          </span>
+          <span class="kpi-tag editable-element" id="kpi-tag-4">QUADRO EFETIVO</span>
+        </div>
+        <div class="kpi-value" id="kpi-val-hc">81 <span class="unit" style="font-size:0.95rem;">colabs</span></div>
+        <div class="kpi-footer">
+          <span class="editable-element" id="kpi-f-4">Início: 118 posições</span>
+          <span class="trend-indicator trend-positive" id="kpi-trend-hc">-31,36%</span>
+        </div>
+      </div>
+
+      <!-- 6. Folha Per Capita -->
+      <div class="kpi-card accent-rose" id="kpiFolhaPerCapitaCard">
+        <div class="kpi-header">
+          <span class="kpi-title editable-element" id="kpi-t-5">
+            <span class="icon-silhouette"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M6 8l6-5 6 5M6 8l-4 8h8L6 8zM18 8l-4 8h8l-4-8z"/></svg></span>
+            Folha Per Capita
+          </span>
+          <span class="kpi-tag editable-element" id="kpi-tag-5">CUSTO MÉDIO</span>
+        </div>
+        <div class="kpi-value" id="kpi-val-folhapc"><span class="unit">R$</span> 6.915,00 <span class="unit" style="font-size:0.85rem;">/ mês</span></div>
+        <div class="kpi-footer">
+          <span class="editable-element" id="kpi-f-5">vs R$ 7.081,53 em 2025</span>
+          <span class="trend-indicator trend-positive" id="kpi-trend-folhapc">-2,35%</span>
+        </div>
+      </div>
+
+      <!-- 7. Férias Auditada -->
+      <div class="kpi-card accent-emerald" id="kpiFeriasCardTarget">
+        <div class="kpi-header">
+          <span class="kpi-title editable-element" id="kpi-t-ferias-top">
+            <span class="icon-silhouette"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+            Custo Férias
+          </span>
+          <span class="kpi-tag editable-element" id="kpi-tag-ferias-top">43 GOZOS</span>
+        </div>
+        <div class="kpi-value" id="kpi-val-ferias-top"><span class="unit">R$</span> 134.478,46</div>
+        <div class="kpi-footer">
+          <span class="editable-element" id="kpi-f-ferias-top">Média Mensal: R$ 22.413,08</span>
+          <span class="trend-indicator trend-positive" id="kpi-trend-ferias">100% Regular</span>
+        </div>
+      </div>
+
+      <!-- 8. Custo Rescisório -->
+      <div class="kpi-card accent-rose" id="kpiRescisaoCardTarget">
+        <div class="kpi-header">
+          <span class="kpi-title editable-element" id="kpi-t-rescisao-top">
+            <span class="icon-silhouette"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg></span>
+            Custo Rescisório
+          </span>
+          <span class="kpi-tag editable-element" id="kpi-tag-rescisao-top">51 RESCISÕES</span>
+        </div>
+        <div class="kpi-value" id="kpi-val-rescisao-top"><span class="unit">R$</span> 262.651,82</div>
+        <div class="kpi-footer">
+          <span class="editable-element" id="kpi-f-rescisao-top">Média / Rescisão: R$ 5.150,03</span>
+          <span class="trend-indicator trend-neutral" id="kpi-trend-rescisao">Ajuste Quadro</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 1: VISÃO EXECUTIVA -->
+    <div id="tab-visao-geral" class="tab-pane active">
+      <div class="executive-callout">
+        <div class="callout-header">
+          <span class="callout-tag editable-element" id="callout-tag-1">DIRETRIZ ESTRATÉGICA & DIAGNÓSTICO OPERACIONAL — HORAS EXTRAS & TERCEIRIZAÇÃO</span>
+          <span class="callout-source editable-element" id="callout-src-1">BASE CONSOLIDADA 1º SEMESTRE 2025 vs 2026</span>
+        </div>
+        <p class="callout-text editable-element" id="callout-text-1">
+          “As horas extras apresentaram redução de 41,51% no semestre consolidado. A integração da Enfok Terceirizada (R$ 239.905,21 no 1S 2026) garantiu a flexibilidade de escala sem elevar o passivo trabalhista da folha própria CLT.”
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c1-title">Evolução Mensal do Custo de Folha</h2>
+              <span class="card-subtitle editable-element" id="c1-sub">Comparativo Homólogo 1º Semestre 2025 vs 1º Semestre 2026</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartFolhaEvolucao', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetSingleChartLabels('chartFolhaEvolucao')">Reset</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartFolhaEvolucao"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c2-title">Curva de Desembolso de Horas Extras</h2>
+              <span class="card-subtitle editable-element" id="c2-sub">Redução Sistemática no 1º Semestre de 2026 (R$)</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartHEEvolucao', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetSingleChartLabels('chartHEEvolucao')">Reset</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartHEEvolucao"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c-exec-ferias-title">Desembolso de Férias (1S26)</h2>
+              <span class="card-subtitle editable-element" id="c-exec-ferias-sub">Distribuição Total Auditada (R$ 134.478,46)</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartExecFerias', this)">Rótulos</button>
+            </div>
+          </div>
+          <div class="chart-container-sm">
+            <canvas id="chartExecFerias"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c-exec-abs-title">Dias de Atestado por Área</h2>
+              <span class="card-subtitle editable-element" id="c-exec-abs-sub">Absenteísmo Médico no 1S 2026</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartExecAbs', this)">Rótulos</button>
+            </div>
+          </div>
+          <div class="chart-container-sm">
+            <canvas id="chartExecAbs"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title editable-element" id="c5-title">Resultado Jurídico-Trabalhista</h2>
+              <span class="card-subtitle editable-element" id="c5-sub">Valor da Causa vs Sentença Fixada</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartJuridicoMitigacao', this)">Rótulos</button>
+            </div>
+          </div>
+          <div class="chart-container-sm">
+            <canvas id="chartJuridicoMitigacao"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title editable-element" id="tbl1-title">Matriz Sintética de Desempenho Operacional por Área</h2>
+            <span class="card-subtitle editable-element" id="tbl1-sub">Consolidação Integrada com Resumo de Férias — 1º Semestre de 2026</span>
+          </div>
+          <span class="card-badge">BALANCED VIEW</span>
+        </div>
+        <div class="table-container">
+          <table class="data-table" id="tableMatrizSintetica">
+            <thead>
+              <tr>
+                <th>Área Operacional</th>
+                <th>Custo Folha (1S26)</th>
+                <th>Var. Folha (vs 2025)</th>
+                <th>Férias (1S26)</th>
+                <th>Horas Extras (1S26)</th>
+                <th>Headcount Final</th>
+                <th>Desligamentos</th>
+                <th>Custo Rescisório</th>
+                <th>Atestados (Dias)</th>
+                <th>Passivo (Sentenças)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: CUSTO DE FOLHA, CENÁRIO FLEXÍVEL & TERCEIRIZAÇÃO -->
+    <div id="tab-folha" class="tab-pane">
+      
+      <div class="stat-strip">
+        <div class="stat-box">
+          <span class="stat-label">Folha Média Mensal 2026</span>
+          <span class="stat-val" id="flh-st-val-1">R$ 677.022,25</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Folha Per Capita Média</span>
+          <span class="stat-val" style="color:var(--color-logistica);" id="flh-st-val-2">R$ 6.915,00</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Faturamento Global 1S26</span>
+          <span class="stat-val" style="color:var(--accent-emerald);" id="flh-st-val-fat">R$ 38.009.523,14</span>
+          <span style="font-size:0.62rem; color:var(--text-muted);">Transporte (R$ 29,02M) + Logística (R$ 8,99M)</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Custo Enfok Terceirizada</span>
+          <span class="stat-val" style="color:var(--color-enfok);" id="flh-st-val-enfok">R$ 239.905,21</span>
+        </div>
+      </div>
+
+      <!-- MÓDULO EXECUTIVO: CENÁRIO MENSAL (BASEADO EM FATURAMENTO) -->
+      <div class="scenario-card" id="scenarioModuleTarget">
+        <div class="scenario-header-banner">
+          <span id="scenarioBannerTitle">CENÁRIO - JANEIRO/2026 (TRANSPORTE)</span>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <select id="scenarioMonthSelect" class="filter-select" style="background:#FFFFFF; color:#0F172A;" onchange="updateScenarioWidget()">
+              <option value="Jan" selected>Janeiro / 2026</option>
+              <option value="Fev">Fevereiro / 2026</option>
+              <option value="Mar">Março / 2026</option>
+              <option value="Abr">Abril / 2026</option>
+              <option value="Mai">Maio / 2026</option>
+              <option value="Jun">Junho / 2026</option>
+            </select>
+            <select id="scenarioAreaSelect" class="filter-select" style="background:#FFFFFF; color:#0F172A;" onchange="updateScenarioWidget()">
+              <option value="Transporte" selected>Transporte</option>
+              <option value="Logística">Logística</option>
+              <option value="SG&A">SG&A (Corporativo)</option>
+              <option value="Total">Consolidado Geral</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="scenario-body">
+          <div class="scenario-kpis">
+            <div class="scenario-kpi-item">
+              <span class="scenario-kpi-label">FATURAMENTO (ÁREA):</span>
+              <span class="scenario-kpi-val" id="scen-fat-val">R$ 4.657.787,74</span>
+            </div>
+            <div class="scenario-kpi-item">
+              <span class="scenario-kpi-label">CUSTO MÉDIO (FOLHA/COLAB):</span>
+              <span class="scenario-kpi-val" id="scen-cm-val" style="color:var(--color-logistica);">R$ 6.640,80</span>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table" id="tableScenarioBreakdown">
+              <thead>
+                <tr>
+                  <th>Componente Flexível</th>
+                  <th>Valor Desembolsado (R$)</th>
+                  <th>Relação sobre FAT (%)</th>
+                  <th>Índice sobre Custo Médio (CM)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>HORA EXTRA</strong></td>
+                  <td class="mono" id="scen-row-he-val">R$ 24.457,37</td>
+                  <td class="mono" id="scen-row-he-fat">0,53%</td>
+                  <td class="mono" id="scen-row-he-cm">3,68</td>
+                </tr>
+                <tr>
+                  <td><strong>TERCEIRIZAÇÃO (ENFOK)</strong></td>
+                  <td class="mono" id="scen-row-enf-val">R$ 41.530,69</td>
+                  <td class="mono" id="scen-row-enf-fat">0,89%</td>
+                  <td class="mono" id="scen-row-enf-cm">6,25</td>
+                </tr>
+                <tr style="font-weight: 600; background: var(--btn-bg);">
+                  <td>TOTAL CUSTOS FLEXÍVEIS</td>
+                  <td class="mono" id="scen-row-tot-val" style="color:var(--color-transporte);">R$ 65.988,06</td>
+                  <td class="mono" id="scen-row-tot-fat" style="color:var(--color-transporte); font-weight:700;">1,42%</td>
+                  <td class="mono" id="scen-row-tot-cm">9,94</td>
+                </tr>
+                <tr style="border-top: 2px solid var(--border-color);">
+                  <td colspan="2"><strong style="text-transform:uppercase;">CUSTO FLEXÍVEL x FATURAMENTO:</strong></td>
+                  <td colspan="2" class="mono" id="scen-final-ratio" style="font-weight:700; color:var(--color-transporte); font-size:1.05rem;">1,42%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPARATIVO CUSTO MENSAL X ENFOK -->
+      <div class="card" id="enfokTargetCard" style="border-left: 4px solid var(--color-enfok);">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title" style="color: var(--color-enfok);">Custo Mensal da Terceirização Operacional — Prestadora Enfok</h2>
+            <span class="card-subtitle">Comparativo Custo Mensal da Folha com e sem Enfok Terceirizada por Área e % de Impacto sobre Faturamento</span>
+          </div>
+          <span class="card-badge" style="background: var(--color-enfok-soft); color: var(--color-enfok);">ANÁLISE SETORIAL ENFOK</span>
+        </div>
+
+        <div class="grid-2">
+          <div class="chart-container">
+            <canvas id="chartEnfokVsPropria"></canvas>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartEnfokDistribuicao"></canvas>
+          </div>
+        </div>
+
+        <div class="table-container" style="margin-top: 16px;">
+          <table class="data-table" id="tableEnfokComparativo">
+            <thead>
+              <tr>
+                <th>Área</th>
+                <th>Mês</th>
+                <th>2025 Folha CLT</th>
+                <th>2026 C/ Enfok (Consolidado)</th>
+                <th>2026 S/ Enfok (Só CLT)</th>
+                <th>Custo Enfok</th>
+                <th>% Impacto s/ Faturamento (Enfok ÷ FAT)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Transporte</td><td>Janeiro</td><td class="mono">R$ 489.673,18</td><td class="mono">R$ 493.104,85</td><td class="mono">R$ 451.574,16</td><td class="mono" style="color:var(--color-enfok);">R$ 41.530,69</td><td class="mono tag-pill tag-amber">0,89%</td></tr>
+              <tr><td>Logística</td><td>Janeiro</td><td class="mono">R$ 154.212,50</td><td class="mono">R$ 136.499,78</td><td class="mono">R$ 126.893,75</td><td class="mono" style="color:var(--color-enfok);">R$ 9.606,03</td><td class="mono tag-pill tag-amber">0,89%</td></tr>
+              <tr><td>SG&A</td><td>Janeiro</td><td class="mono">R$ 172.236,29</td><td class="mono">R$ 168.407,60</td><td class="mono">R$ 163.771,78</td><td class="mono" style="color:var(--color-enfok);">R$ 4.635,82</td><td class="mono tag-pill tag-emerald">0,08%</td></tr>
+              <tr><td>Transporte</td><td>Fevereiro</td><td class="mono">R$ 504.789,10</td><td class="mono">R$ 390.679,89</td><td class="mono">R$ 367.039,28</td><td class="mono" style="color:var(--color-enfok);">R$ 23.640,61</td><td class="mono tag-pill tag-amber">0,60%</td></tr>
+              <tr><td>Logística</td><td>Fevereiro</td><td class="mono">R$ 159.200,45</td><td class="mono">R$ 127.388,97</td><td class="mono">R$ 126.947,22</td><td class="mono" style="color:var(--color-enfok);">R$ 441,75</td><td class="mono tag-pill tag-emerald">0,04%</td></tr>
+              <tr><td>SG&A</td><td>Fevereiro</td><td class="mono">R$ 177.325,61</td><td class="mono">R$ 156.594,71</td><td class="mono">R$ 154.827,71</td><td class="mono" style="color:var(--color-enfok);">R$ 1.767,00</td><td class="mono tag-pill tag-emerald">0,04%</td></tr>
+              <tr><td>Transporte</td><td>Março</td><td class="mono">R$ 509.503,52</td><td class="mono">R$ 380.828,37</td><td class="mono">R$ 361.476,69</td><td class="mono" style="color:var(--color-enfok);">R$ 19.351,68</td><td class="mono tag-pill tag-amber">0,48%</td></tr>
+              <tr><td>Logística</td><td>Março</td><td class="mono">R$ 160.687,30</td><td class="mono">R$ 141.852,66</td><td class="mono">R$ 138.331,85</td><td class="mono" style="color:var(--color-enfok);">R$ 3.520,81</td><td class="mono tag-pill tag-emerald">0,37%</td></tr>
+              <tr><td>SG&A</td><td>Março</td><td class="mono">R$ 178.981,71</td><td class="mono">R$ 154.979,99</td><td class="mono">R$ 151.224,81</td><td class="mono" style="color:var(--color-enfok);">R$ 3.755,18</td><td class="mono tag-pill tag-emerald">0,08%</td></tr>
+              <tr><td>Transporte</td><td>Abril</td><td class="mono">R$ 534.768,07</td><td class="mono">R$ 416.094,85</td><td class="mono">R$ 399.203,72</td><td class="mono" style="color:var(--color-enfok);">R$ 16.891,13</td><td class="mono tag-pill tag-amber">0,42%</td></tr>
+              <tr><td>Logística</td><td>Abril</td><td class="mono">R$ 168.650,22</td><td class="mono">R$ 163.661,40</td><td class="mono">R$ 154.297,74</td><td class="mono" style="color:var(--color-enfok);">R$ 9.363,66</td><td class="mono tag-pill tag-amber">0,95%</td></tr>
+              <tr><td>SG&A</td><td>Abril</td><td class="mono">R$ 187.861,82</td><td class="mono">R$ 172.130,79</td><td class="mono">R$ 169.480,29</td><td class="mono" style="color:var(--color-enfok);">R$ 2.650,50</td><td class="mono tag-pill tag-emerald">0,05%</td></tr>
+              <tr><td>Transporte</td><td>Maio</td><td class="mono">R$ 514.303,64</td><td class="mono">R$ 400.303,30</td><td class="mono">R$ 367.767,95</td><td class="mono" style="color:var(--color-enfok);">R$ 32.535,35</td><td class="mono tag-pill tag-amber">0,88%</td></tr>
+              <tr><td>Logística</td><td>Maio</td><td class="mono">R$ 162.201,36</td><td class="mono">R$ 131.027,36</td><td class="mono">R$ 129.922,98</td><td class="mono" style="color:var(--color-enfok);">R$ 1.104,38</td><td class="mono tag-pill tag-emerald">0,11%</td></tr>
+              <tr><td>SG&A</td><td>Maio</td><td class="mono">R$ 180.667,73</td><td class="mono">R$ 168.297,74</td><td class="mono">R$ 162.775,87</td><td class="mono" style="color:var(--color-enfok);">R$ 5.521,87</td><td class="mono tag-pill tag-emerald">0,12%</td></tr>
+              <tr><td>Transporte</td><td>Junho</td><td class="mono">R$ 455.196,14</td><td class="mono">R$ 384.109,41</td><td class="mono">R$ 321.397,48</td><td class="mono" style="color:var(--color-enfok);">R$ 62.711,93</td><td class="mono tag-pill tag-rose">1,95%</td></tr>
+              <tr><td>Logística</td><td>Junho</td><td class="mono">R$ 143.588,67</td><td class="mono">R$ 110.474,49</td><td class="mono">R$ 110.036,08</td><td class="mono" style="color:var(--color-enfok);">R$ 438,41</td><td class="mono tag-pill tag-emerald">0,10%</td></tr>
+              <tr><td>SG&A</td><td>Junho</td><td class="mono">R$ 159.874,89</td><td class="mono">R$ 205.602,58</td><td class="mono">R$ 205.164,17</td><td class="mono" style="color:var(--color-enfok);">R$ 438,41</td><td class="mono tag-pill tag-emerald">0,01%</td></tr>
+              <tr style="font-weight:600; background:var(--btn-bg);">
+                <td>TOTAL CONSOLIDADO</td><td>1S 2026</td><td class="mono">R$ 5.013.722,20</td><td class="mono" style="color:var(--accent-emerald);">R$ 4.302.038,74</td><td class="mono">R$ 4.062.133,53</td><td class="mono" style="color:var(--color-enfok);">R$ 239.905,21</td><td class="mono tag-pill tag-amber">0,83%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VISUAL: CUSTOS FLEXÍVEIS (HE + ENFOK) VS FATURAMENTO -->
+      <div class="card" id="flexVsFatCard">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title" style="color: var(--color-transporte);">Comprometimento de Custos Flexíveis (Horas Extras + Enfok) vs Faturamento Mensal</h2>
+            <span class="card-subtitle">Evolução Mensal do Custo de Flexibilização Operacional (R$) e % de Impacto sobre a Receita Bruta Total</span>
+          </div>
+          <div class="card-controls">
+            <button class="ctrl-btn" onclick="toggleChartLabels('chartFlexVsFat', this)">Rótulos</button>
+            <button class="ctrl-btn" onclick="resetSingleChartLabels('chartFlexVsFat')">Reset</button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="chartFlexVsFat"></canvas>
+        </div>
+      </div>
+
+      <!-- HISTÓRICO DE PRODUTIVIDADE: FATURAMENTO X FOLHA TOTAL (CLT + ENFOK) -->
+      <div class="card" id="fatVsFolhaTargetCard">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title">Histórico de Produtividade: Faturamento Mensal vs Custo Consolidado da Folha (CLT + Enfok)</h2>
+            <span class="card-subtitle">Comparativo de Faturamento Mensal, Custo Consolidado de Folha (CLT + Enfok) e % Comprometimento</span>
+          </div>
+          <div class="card-controls">
+            <span style="font-size:0.7rem; font-weight:600; text-transform:uppercase; color:var(--text-secondary);">Exibir até:</span>
+            <select id="selectFatLimitMonth" class="filter-select" onchange="filterFatChartUntil(this.value)">
+              <option value="5" selected>Junho (1º Semestre)</option>
+              <option value="2">Março (1º Trimestre)</option>
+              <option value="8">Setembro (3º Trimestre)</option>
+              <option value="11">Dezembro (Ano Completo Proj.)</option>
+            </select>
+            <button class="ctrl-btn" onclick="toggleChartLabels('chartFatXFolha', this)">Rótulos</button>
+            <button class="ctrl-btn" onclick="resetSingleChartLabels('chartFatXFolha')">Reset</button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="chartFatXFolha"></canvas>
+        </div>
+      </div>
+
+      <!-- TRAJETÓRIA HISTÓRICA: 1S25 vs 1S26 COM COMPARATIVO PERCENTUAL -->
+      <div class="card" id="historico2STargetCard">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title">Trajetória Histórica: 1º Sem 2025 vs 1º Sem 2026 (Variação Percentual)</h2>
+            <span class="card-subtitle">Comparativo Homólogo de Folha (-18,98%), Horas Extras (-41,51%) e Rescisões (+12,99%)</span>
+          </div>
+          <div class="card-controls">
+            <button class="ctrl-btn" onclick="toggleChartLabels('chartHistoricoSemestral', this)">Rótulos</button>
+            <button class="ctrl-btn" onclick="resetSingleChartLabels('chartHistoricoSemestral')">Reset</button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="chartHistoricoSemestral"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 3: GESTÃO & CUSTO DE FÉRIAS -->
+    <div id="tab-ferias" class="tab-pane">
+      <div class="stat-strip">
+        <div class="stat-box">
+          <span class="stat-label">Desembolso Total de Férias</span>
+          <span class="stat-val" id="fer-st-val-1" style="color:var(--accent-emerald);">R$ 134.478,46</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Média Mensal de Férias</span>
+          <span class="stat-val" id="fer-st-val-2">R$ 22.413,08</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Férias SG&A</span>
+          <span class="stat-val" id="fer-st-val-3" style="color:var(--color-sga);">R$ 26.502,74</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Férias Transporte</span>
+          <span class="stat-val" id="fer-st-val-4" style="color:var(--color-transporte);">R$ 75.867,05</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Férias Logística</span>
+          <span class="stat-val" id="fer-st-val-5" style="color:var(--color-logistica);">R$ 32.108,67</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Concessões de Férias</span>
+          <span class="stat-val" id="fer-st-val-6" style="color:var(--accent-amber);">43 gozos</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card" id="feriasAreaCardTarget">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Desembolso Total de Férias por Área</h2>
+              <span class="card-subtitle">Valores Pagos Conforme Planilha Férias 2026</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartFeriasArea', this)">Rótulos</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartFeriasArea"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Curva Mensal de Desembolso de Férias (2026)</h2>
+              <span class="card-subtitle">Fluxo de Caixa Mensal de Férias (Jan a Jun)</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartFeriasEvolucao', this)">Rótulos</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartFeriasEvolucao"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title">Detalhamento Consolidado de Férias (1º Semestre 2026)</h2>
+            <span class="card-subtitle">Extração Fiel e Auditada da Planilha Férias 2026</span>
+          </div>
+          <span class="card-badge">TOTAL: R$ 134.478,46</span>
+        </div>
+        <div class="table-container">
+          <table class="data-table" id="tableFeriasDetalhamento">
+            <thead>
+              <tr>
+                <th>Mês</th>
+                <th>Transporte (R$)</th>
+                <th>Colabs Transp</th>
+                <th>SG&A (R$)</th>
+                <th>Colabs SG&A</th>
+                <th>Logística (R$)</th>
+                <th>Colabs Log</th>
+                <th>Total Mensal (R$)</th>
+                <th>Total Colaboradores</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-month="Jan"><td>Janeiro</td><td class="mono">R$ 15.574,32</td><td class="mono">5</td><td class="mono">R$ 10.208,50</td><td class="mono">4</td><td class="mono">R$ 4.854,50</td><td class="mono">3</td><td class="mono" style="font-weight:500; color:var(--accent-emerald);">R$ 30.637,32</td><td class="mono">12</td></tr>
+              <tr data-month="Fev"><td>Fevereiro</td><td class="mono">R$ 6.431,79</td><td class="mono">2</td><td class="mono">R$ 2.263,23</td><td class="mono">1</td><td class="mono">R$ 4.311,27</td><td class="mono">2</td><td class="mono" style="font-weight:500; color:var(--accent-emerald);">R$ 13.006,29</td><td class="mono">5</td></tr>
+              <tr data-month="Mar"><td>Março</td><td class="mono">R$ 6.923,15</td><td class="mono">2</td><td class="mono">R$ 2.201,19</td><td class="mono">1</td><td class="mono">R$ 7.821,18</td><td class="mono">2</td><td class="mono" style="font-weight:500; color:var(--accent-emerald);">R$ 16.945,52</td><td class="mono">5</td></tr>
+              <tr data-month="Abr"><td>Abril</td><td class="mono">R$ 12.475,69</td><td class="mono">3</td><td class="mono">R$ 4.662,83</td><td class="mono">1</td><td class="mono">R$ 3.935,94</td><td class="mono">2</td><td class="mono" style="font-weight:500; color:var(--accent-emerald);">R$ 21.074,46</td><td class="mono">6</td></tr>
+              <tr data-month="Mai"><td>Maio</td><td class="mono">R$ 34.462,10</td><td class="mono">8</td><td class="mono">R$ 3.008,58</td><td class="mono">1</td><td class="mono">R$ 0,00</td><td class="mono">0</td><td class="mono" style="font-weight:500; color:var(--accent-emerald);">R$ 37.470,68</td><td class="mono">9</td></tr>
+              <tr data-month="Jun"><td>Junho</td><td class="mono">R$ 0,00</td><td class="mono">0</td><td class="mono">R$ 4.158,41</td><td class="mono">2</td><td class="mono">R$ 11.185,78</td><td class="mono">4</td><td class="mono" style="font-weight:500; color:var(--accent-emerald);">R$ 15.344,19</td><td class="mono">6</td></tr>
+              <tr style="font-weight:600; background:var(--btn-bg);"><td>TOTAL 1S26</td><td class="mono" style="color:var(--color-transporte);">R$ 75.867,05</td><td class="mono">20</td><td class="mono" style="color:var(--color-sga);">R$ 26.502,74</td><td class="mono">10</td><td class="mono" style="color:var(--color-logistica);">R$ 32.108,67</td><td class="mono">13</td><td class="mono" style="color:var(--accent-emerald);">R$ 134.478,46</td><td class="mono">43 gozos</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: HORAS EXTRAS -->
+    <div id="tab-he" class="tab-pane">
+      <div class="stat-strip">
+        <div class="stat-box">
+          <span class="stat-label">HE Total Desembolsada</span>
+          <span class="stat-val" id="he-st-val-1">R$ 109.091,50</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">HE Per Capita Médio</span>
+          <span class="stat-val" style="color:var(--color-logistica);" id="he-st-val-2">R$ 228,39 / colab</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Per Capita Transporte</span>
+          <span class="stat-val" style="color:var(--color-transporte);" id="he-st-val-3">R$ 321,51</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Per Capita Logística</span>
+          <span class="stat-val" style="color:var(--accent-rose);" id="he-st-val-4">R$ 170,98</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Per Capita SG&A</span>
+          <span class="stat-val" style="color:var(--color-sga);" id="he-st-val-5">R$ 192,69</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Total de Horas Extras Acumulado por Área</h2>
+              <span class="card-subtitle">Desembolso Total Acumulado no Semestre (R$)</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartCompAcumuladoHE', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetSingleChartLabels('chartCompAcumuladoHE')">Reset</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartCompAcumuladoHE"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Per Capita Médio por Área (2025 vs 2026)</h2>
+              <span class="card-subtitle">Custo Médio Semestral por Colaborador Ativo em HE (R$)</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartCompAcumuladoPC', this)">Rótulos</button>
+              <button class="ctrl-btn" onclick="resetSingleChartLabels('chartCompAcumuladoPC')">Reset</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartCompAcumuladoPC"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABELA COMPLETA COM FILTROS POR MÊS E ÁREA -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title">Detalhamento Mensal Completo por Área (1S 2025 vs 1S 2026)</h2>
+            <span class="card-subtitle">Todos os 6 meses auditados (Jan a Jun) com filtros múltiplos</span>
+          </div>
+          <span class="card-badge">18 REGISTROS COMPLETOS</span>
+        </div>
+
+        <div class="table-filter-bar">
+          <div class="table-filter-group">
+            <span style="font-size:0.7rem; font-weight:600; text-transform:uppercase; color:var(--text-secondary);">Mês:</span>
+            <button class="table-filter-btn active" data-he-month="all" onclick="filterHETable('month', 'all', this)">Todos</button>
+            <button class="table-filter-btn" data-he-month="Jan" onclick="filterHETable('month', 'Jan', this)">Jan</button>
+            <button class="table-filter-btn" data-he-month="Fev" onclick="filterHETable('month', 'Fev', this)">Fev</button>
+            <button class="table-filter-btn" data-he-month="Mar" onclick="filterHETable('month', 'Mar', this)">Mar</button>
+            <button class="table-filter-btn" data-he-month="Abr" onclick="filterHETable('month', 'Abr', this)">Abr</button>
+            <button class="table-filter-btn" data-he-month="Mai" onclick="filterHETable('month', 'Mai', this)">Mai</button>
+            <button class="table-filter-btn" data-he-month="Jun" onclick="filterHETable('month', 'Jun', this)">Jun</button>
+          </div>
+          <div class="table-filter-group">
+            <span style="font-size:0.7rem; font-weight:600; text-transform:uppercase; color:var(--text-secondary);">Área:</span>
+            <button class="table-filter-btn active" data-he-area="all" onclick="filterHETable('area', 'all', this)">Todas</button>
+            <button class="table-filter-btn" data-he-area="Transporte" onclick="filterHETable('area', 'Transporte', this)">Transporte</button>
+            <button class="table-filter-btn" data-he-area="Logística" onclick="filterHETable('area', 'Logística', this)">Logística</button>
+            <button class="table-filter-btn" data-he-area="SG&A" onclick="filterHETable('area', 'SG&A', this)">SG&A</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table" id="tableMensalArea">
+            <thead>
+              <tr>
+                <th>Mês</th>
+                <th>Área</th>
+                <th>HE 2025 (R$)</th>
+                <th>HE 2026 (R$)</th>
+                <th>Variação HE %</th>
+                <th>Per Capita 2025 (R$)</th>
+                <th>Per Capita 2026 (R$)</th>
+                <th>Variação Per Capita %</th>
+                <th>Colabs HE 2025</th>
+                <th>Colabs HE 2026</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: HEADCOUNT & TURNOVER -->
+    <div id="tab-headcount" class="tab-pane">
+      <div class="stat-strip" id="turnoverModuleTarget">
+        <div class="stat-box">
+          <span class="stat-label">Quadro Inicial</span>
+          <span class="stat-val" id="hc-st-val-1">118 colabs</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Quadro Final</span>
+          <span class="stat-val" id="hc-st-val-2">81 colabs</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Total Demissões (1S26)</span>
+          <span class="stat-val" id="hc-st-val-3" style="color:var(--accent-rose);">51 desligamentos</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Total Admissões (1S26)</span>
+          <span class="stat-val" id="hc-st-val-4" style="color:var(--accent-emerald);">18 contratações</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Taxa de Turnover Médio</span>
+          <span class="stat-val" id="hc-st-val-5" style="color:var(--color-transporte);">6,03% / mês</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Custo Rescisório 1S26</span>
+          <span class="stat-val" id="hc-st-val-rescisao" style="color:var(--accent-rose);">R$ 262.651,82</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Evolução Mensal do Turnover e Movimentação (1S26)</h2>
+              <span class="card-subtitle">Admissões vs Desligamentos Mês a Mês</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartTurnoverMensal', this)">Rótulos</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartTurnoverMensal"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Taxa Mensal de Turnover (%)</h2>
+              <span class="card-subtitle">Rotatividade Relativa de Pessoal por Mês</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartTurnoverTaxa', this)">Rótulos</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartTurnoverTaxa"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Impacto Financeiro: Custo Rescisório vs Admissional (1S26)</h2>
+              <span class="card-subtitle">Valores Totais Desembolsados por Área</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartCustosMovimentacao', this)">Rótulos</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartCustosMovimentacao"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Motivos dos Desligamentos (1S 2026)</h2>
+              <span class="card-subtitle">Perfil das Rescisões Contratuais Registradas</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartMotivosDemissao', this)">Rótulos</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartMotivosDemissao"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: ABSENTEÍSMO & SAÚDE OCUPACIONAL -->
+    <div id="tab-absenteismo" class="tab-pane">
+      <div class="stat-strip">
+        <div class="stat-box">
+          <span class="stat-label">Total Faltas Injustificadas</span>
+          <span class="stat-val" id="abs-st-val-1" style="color:var(--color-transporte);">143 faltas</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Total Dias de Atestado</span>
+          <span class="stat-val" id="abs-st-val-2" style="color:var(--accent-rose);">346 dias</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Concentração em Transporte</span>
+          <span class="stat-val" id="abs-st-val-3" style="color:var(--color-transporte);">81,2% (281 dias)</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Afastamentos INSS / Maternidade</span>
+          <span class="stat-val" id="abs-st-val-4">5 colaboradoras</span>
+        </div>
+      </div>
+
+      <div class="grid-2" id="absenteismoChartsTarget">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Evolução Mensal de Dias de Atestado por Área</h2>
+              <span class="card-subtitle">Acompanhamento do Absenteísmo Clínico por Setor</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartAtestadosEvolucao', this)">Rótulos</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartAtestadosEvolucao"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Faltas Injustificadas Mensais por Área (1S 2026)</h2>
+              <span class="card-subtitle">Volume de Ausências sem Justificativa Legal</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartFaltasEvolucao', this)">Rótulos</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartFaltasEvolucao"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="afastamentosTableTarget">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title">Registro de Afastamentos Longos & Licenças (2026)</h2>
+            <span class="card-subtitle">Licença Maternidade e Afastamentos Previdenciários (INSS)</span>
+          </div>
+          <span class="card-badge">BENEFÍCIOS PREVIDENCIÁRIOS</span>
+        </div>
+
+        <div class="table-filter-bar">
+          <div class="table-filter-group">
+            <span style="font-size:0.7rem; font-weight:600; text-transform:uppercase; color:var(--text-secondary);">Filtrar Status:</span>
+            <button class="table-filter-btn active" data-afast-filter="all" onclick="filterAfastamentosByStatus('all')">Todos</button>
+            <button class="table-filter-btn" data-afast-filter="EM VIGÊNCIA" onclick="filterAfastamentosByStatus('EM VIGÊNCIA')">Em Vigência</button>
+            <button class="table-filter-btn" data-afast-filter="EM ANDAMENTO" onclick="filterAfastamentosByStatus('EM ANDAMENTO')">Em Andamento</button>
+            <button class="table-filter-btn" data-afast-filter="ENCERRADO" onclick="filterAfastamentosByStatus('ENCERRADO')">Encerrado</button>
+            <button class="table-filter-btn" data-afast-filter="RETORNO AO TRABALHO" onclick="filterAfastamentosByStatus('RETORNO AO TRABALHO')">Retorno ao Trabalho</button>
+          </div>
+          <span style="font-size:0.7rem; font-family:'JetBrains Mono', monospace; color:var(--text-muted);" id="afastCountLabel">Exibindo 5 registros</span>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table" id="tableAfastamentos">
+            <thead>
+              <tr>
+                <th>Colaboradora</th>
+                <th>Área</th>
+                <th>Tipo de Afastamento</th>
+                <th>Data de Início</th>
+                <th>Impacto em Folha</th>
+                <th style="min-width: 170px;">Status</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 7: PASSIVO TRABALHISTA -->
+    <div id="tab-juridico" class="tab-pane">
+      <div class="stat-strip">
+        <div class="stat-box">
+          <span class="stat-label">Total de Ações Mapeadas</span>
+          <span class="stat-val" id="jur-st-val-1">32 processos</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Risco Inicial Pleiteado</span>
+          <span class="stat-val" id="jur-st-val-2">R$ 1.367.915,77</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Desembolso Efetivo (Sentenças)</span>
+          <span class="stat-val" id="jur-st-val-3" style="color:var(--accent-emerald);">R$ 143.010,64</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Taxa de Mitigação Financeira</span>
+          <span class="stat-val" id="jur-st-val-4" style="color:var(--color-logistica);">89,55% mitigado</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Causa Pleiteada vs Sentença Homologada por Área</h2>
+              <span class="card-subtitle">Exposição Financeira Inicial vs Realizada (R$) por Área</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartPassivoArea', this)">Rótulos</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartPassivoArea"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">Ranking dos Principais Pleitos Reclamados</h2>
+              <span class="card-subtitle">Frequência de Pedidos nas Iniciais Trabalhistas</span>
+            </div>
+            <div class="card-controls">
+              <button class="ctrl-btn" onclick="toggleChartLabels('chartPleitosFrequencia', this)">Rótulos</button>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chartPleitosFrequencia"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="processosTableTarget">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title">Painel Geral de Processos Trabalhistas</h2>
+            <span class="card-subtitle">Base Completa Auditada (32 Processos)</span>
+          </div>
+          <span class="card-badge">BASE COMPLETA</span>
+        </div>
+        
+        <div class="table-filter-bar">
+          <div class="table-filter-group">
+            <span style="font-size:0.7rem; font-weight:600; text-transform:uppercase; color:var(--text-secondary);">Filtrar por Status:</span>
+            <button class="table-filter-btn active" data-status-filter="all" onclick="filterProcessosByStatus('all')">Todos</button>
+            <button class="table-filter-btn" data-status-filter="PENDENTES" onclick="filterProcessosByStatus('PENDENTES')">Aguardando / Em Andamento</button>
+            <button class="table-filter-btn" data-status-filter="AGUARDANDO" onclick="filterProcessosByStatus('AGUARDANDO')">Aguardando</button>
+            <button class="table-filter-btn" data-status-filter="FINALIZADO" onclick="filterProcessosByStatus('FINALIZADO')">Finalizado</button>
+            <button class="table-filter-btn" data-status-filter="ARQUIVADO" onclick="filterProcessosByStatus('ARQUIVADO')">Arquivado</button>
+          </div>
+          <span style="font-size:0.7rem; font-family:'JetBrains Mono', monospace; color:var(--text-muted);" id="processosCountLabel">Exibindo todos os 32 processos</span>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table" id="tableProcessos">
+            <thead>
+              <tr>
+                <th>Reclamante</th>
+                <th>Área / Unidade</th>
+                <th>Vara / Foro</th>
+                <th>Pleito Principal</th>
+                <th>Valor Causa</th>
+                <th>Sentença / Acordo</th>
+                <th style="min-width: 170px;">Status</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast-notification" id="toastMessage">
+    <div id="toastText">Dashboard atualizado com sucesso!</div>
+  </div>
+
+  <!-- UPLOAD MODAL -->
+  <div class="modal-backdrop" id="uploadModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Central de Atualização de Bases de Dados</h3>
+          <p style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">Selecione suas planilhas e clique em "Concluir & Atualizar Dashboard".</p>
+        </div>
+        <button class="modal-close" onclick="closeUploadModal()">[FECHAR]</button>
+      </div>
+
+      <div class="upload-section-grid">
+        <div class="upload-card-slot">
+          <div class="upload-card-header">
+            <div>
+              <div class="upload-card-title">1. Base Visão Folha, Enfok, Férias & Headcount</div>
+              <div class="upload-card-desc">Planilha de Custo Folha, Terceirização Enfok, Férias, Turnover e Atestados</div>
+            </div>
+            <span class="upload-card-status" id="statusBadgeFolha">Pronta para Carregar</span>
+          </div>
+          <div class="upload-card-actions">
+            <button class="upload-slot-btn" onclick="document.getElementById('inputFolhaFile').click()">Selecionar Planilha da Folha (.xlsx)</button>
+            <span class="upload-file-info" id="infoFolhaFile">BASE_VISAO_FOLHA_2026.xlsx (Padrão Carregado)</span>
+            <input type="file" id="inputFolhaFile" accept=".xlsx, .xls" style="display: none;" onchange="handleSingleFileUpload('folha', this.files[0])">
+          </div>
+        </div>
+
+        <div class="upload-card-slot">
+          <div class="upload-card-header">
+            <div>
+              <div class="upload-card-title">2. Base Horas Extras & Eficiência Per Capita</div>
+              <div class="upload-card-desc">Planilha contendo: Acumulado por Área e Comparativo Per Capita 2025 vs 2026</div>
+            </div>
+            <span class="upload-card-status" id="statusBadgeHE">Pronta para Carregar</span>
+          </div>
+          <div class="upload-card-actions">
+            <button class="upload-slot-btn" onclick="document.getElementById('inputHEFile').click()">Selecionar Planilha de Horas Extras (.xlsx)</button>
+            <span class="upload-file-info" id="infoHEFile">comparativo_horas_extras_per_capita.xlsx (Padrão Carregado)</span>
+            <input type="file" id="inputHEFile" accept=".xlsx, .xls" style="display: none;" onchange="handleSingleFileUpload('he', this.files[0])">
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="ctrl-btn" onclick="clearAllData()">Zerar Painel</button>
+          <button class="ctrl-btn" onclick="loadSampleDataAudit()">Restaurar Base Auditada</button>
+        </div>
+        <button class="ctrl-btn active" id="btnApplyAllUploads" onclick="confirmAndApplyUpload()">Concluir & Atualizar Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLOR MODAL -->
+  <div class="modal-backdrop" id="colorModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Personalização de Cores dos Gráficos</h3>
+        <button class="modal-close" onclick="closeColorModal()">[FECHAR]</button>
+      </div>
+
+      <div class="color-picker-grid">
+        <div class="color-item">
+          <label>Transporte</label>
+          <input type="color" id="pickerTransporte" value="#EA580C" onchange="updateAreaColor('transporte', this.value)">
+        </div>
+        <div class="color-item">
+          <label>Logística</label>
+          <input type="color" id="pickerLogistica" value="#0284C7" onchange="updateAreaColor('logistica', this.value)">
+        </div>
+        <div class="color-item">
+          <label>SG&A</label>
+          <input type="color" id="pickerSga" value="#64748B" onchange="updateAreaColor('sga', this.value)">
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="ctrl-btn" onclick="applyPreset('#EA580C', '#0284C7', '#64748B')">Restaurar Padrão</button>
+        <button class="ctrl-btn active" onclick="closeColorModal()">Concluir</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let charts = {};
+    let currentTheme = 'light';
+    let editModeActive = false;
+    let selectedMonth = 'all';
+    let selectedProcessStatusFilter = 'all';
+    let selectedAfastStatusFilter = 'all';
+    let currentTourStep = 0;
+    let allLabelsActive = true;
+    let currentHeFilter = { month: 'all', area: 'all' };
+
+    let areaColors = {
+      transporte: '#EA580C',
+      logistica: '#0284C7',
+      sga: '#64748B',
+      enfok: '#7C3AED'
+    };
+
+    // FATURAMENTO ESPECÍFICO POR ÁREA E MÊS (DA PLANILHA DE FATURAMENTO)
+    const FATURAMENTO_DATA = {
+      Transporte: { Jan: 4657787.74, Fev: 3932575.80, Mar: 4026012.05, Abr: 4068024.63, Mai: 3682636.36, Jun: 3210357.66 },
+      Logistica: { Jan: 1078389.02, Fev: 1008765.70, Mar: 946089.80, Abr: 981550.62, Mai: 1008980.07, Jun: 418231.28 },
+      Total: { Jan: 5736176.76, Fev: 4941341.50, Mar: 4972101.85, Abr: 5049575.25, Mai: 4691616.43, Jun: 3628588.94 }
+    };
+
+    const AUDITED_PROCESSOS_LIST = [
+      {"reclamante": "MILENA COSTA S. CELESTINO", "area": "LOGISTICA EMBU", "vara": "VARA DO EMBU DAS ARTES", "pleito": "Horas Extras, Desvio/Acumulo de Função", "causa": 161531.6, "sentenca": 5582.5, "status": "FINALIZADO"},
+      {"reclamante": "CARLOS EDUARDO PEREIRA", "area": "TRANSPORTE EMBU", "vara": "VARA DO EMBU DAS ARTES", "pleito": "Vinculo CLT, Desvio/Acumulo Função, Dano e Assédio Moral, Hora Extra", "causa": 61464.46, "sentenca": 0.0, "status": "AGUARDANDO"},
+      {"reclamante": "DANIEL LEITE MOURA DA SILVA", "area": "LOGISTICA EMBU", "vara": "VARA DO EMBU DAS ARTES", "pleito": "Horas Extras, Intervalo, Desvio/Acumulo de Função", "causa": 51376.57, "sentenca": 4000.0, "status": "AGUARDANDO"},
+      {"reclamante": "GIRLANE DE PAULA", "area": "LOGISTICA", "vara": "VARA DO EMBU DAS ARTES", "pleito": "Horas Extras", "causa": 51722.54, "sentenca": 4554.0, "status": "FINALIZADO"},
+      {"reclamante": "KATHLEEN CRISTINA DA SILVA SANTOS", "area": "PREVENÇÃO", "vara": "VARA DO EMBU DAS ARTES", "pleito": "Horas Extras", "causa": 23262.22, "sentenca": 0.0, "status": "AGUARDANDO"},
+      {"reclamante": "JEFFERSON PINHEIRO PASSOS", "area": "TRANSPORTE GRU", "vara": "VARA DE GUARULHOS", "pleito": "Horas Extras, Dano/Assedio Moral", "causa": 79000.0, "sentenca": 18000.0, "status": "FINALIZADO"},
+      {"reclamante": "MANOEL REZENDE DOS ANJOS LIMA", "area": "TRANSPORTE GRU", "vara": "VARA DE GUARULHOS", "pleito": "Desvio Função, Resc. Indireta, FGTS atraso, Dano Moral", "causa": 29431.81, "sentenca": 0.0, "status": "AGUARDANDO"},
+      {"reclamante": "FERNANDA CAROLINE CARDOSO", "area": "ADM", "vara": "VARA DO EMBU DAS ARTES", "pleito": "Assedio Moral, horas extras,", "causa": 81655.09, "sentenca": 13000.0, "status": "FINALIZADO"},
+      {"reclamante": "DOUGLAS MORAES GABRIEL", "area": "TRANSPORTE GRU", "vara": "VARA DE GUARULHOS", "pleito": "Horas Extras, Dano/Assedio Moral", "causa": 74000.0, "sentenca": 6924.93, "status": "FINALIZADO"},
+      {"reclamante": "JULIO CESAR DE SOUZA GOMES", "area": "LOGÍSTICA EMBU", "vara": "VARA DO EMBU DAS ARTES", "pleito": "Horas Extras, Admissão Retroativa, Dano e Assédio Moral", "causa": 9118.36, "sentenca": 0.0, "status": "ARQUIVADO"},
+      {"reclamante": "FELIPE BATISTA OLIVEIRA FRAGA", "area": "LOGISTICA", "vara": "VARA DE OSASCO", "pleito": "Horas Extras", "causa": 37254.99, "sentenca": 0.0, "status": "ARQUIVADO"},
+      {"reclamante": "ELAINE DE CAMARGO BARROS", "area": "COMERCIAL", "vara": "SALA 1 3ª VARA DE MARINGÁ", "pleito": "Admissão Retroativa, Dano e Assédio Moral", "causa": 24155.6, "sentenca": 21060.02, "status": "FINALIZADO"},
+      {"reclamante": "JOÃO CARLOS JACINTO THOMAZ", "area": "TRANSPORTE", "vara": "VARA DO EMBU DAS ARTES", "pleito": "Rescisão Indireta, Hora Extra, Desvio/Acumulo de Função", "causa": 16380.18, "sentenca": 3000.0, "status": "FINALIZADO"},
+      {"reclamante": "GESSICA MONALIZA DA SILVA DOURADO", "area": "ADM", "vara": "VARA DO EMBU DAS ARTES", "pleito": "Rescisão indireta, Hora Extra, Admissão Retroativa, Insalubridade, Desvio/Acumulo de Função, Dano e Assédio Moral", "causa": 28921.32, "sentenca": 5000.0, "status": "FINALIZADO"},
+      {"reclamante": "LETICIA MIRANDA RABELO", "area": "LOGÍSTICA EMBU", "vara": "VARA DO EMBU DAS ARTES", "pleito": "Reintegração Gestante, Dano e Assédio Moral, Cesta Básica", "causa": 44007.88, "sentenca": 14000.0, "status": "FINALIZADO"},
+      {"reclamante": "MURILO AQUINO DE JESUS", "area": "LOGISTICA COTIA", "vara": "VARA DE COTIA", "pleito": "Horas Extras, Insalubridade, Admissão Retroativa, Desvio/Acumulo de Função", "causa": 86546.12, "sentenca": 140.74, "status": "FINALIZADO"},
+      {"reclamante": "TIAGO VAZ CARDOSO", "area": "TRANSPORTE", "vara": "ONLINE - VIRTUAL ZOOM", "pleito": "Horas Extras, Rescisão CLT, Desvio/Acumulo Função, Dano e Assédio Moral, Reversão JC", "causa": 38954.83, "sentenca": 31195.8, "status": "FINALIZADO"},
+      {"reclamante": "TATIANA PERRI DA SILVA", "area": "PREVENÇÃO EMBU", "vara": "VARA DO EMBU DAS ARTES", "pleito": "Horas Extras, Periculosidade, Desvio/Acumulo de Função, Dano e Assédio Moral, Doença Adquirida, Cesta Básica, Pensão até 75 anos", "causa": 168397.68, "sentenca": 0.0, "status": "FINALIZADO"},
+      {"reclamante": "PAULO ROBERTO DOS SANTOS CAMILLO", "area": "TRANSPORTE GRU", "vara": "VARA DE GUARULHOS", "pleito": "Horas Extras", "causa": 10000.0, "sentenca": 500.0, "status": "FINALIZADO"},
+      {"reclamante": "DAVI CONCEIÇÃO ALVES", "area": "TRANSPORTE EMBU", "vara": "VARA DO EMBU DAS ARTES", "pleito": "Horas Extras, Dano Moral, Admissão Retroativa, Acumulo de Função", "causa": 40678.5, "sentenca": 0.0, "status": "FINALIZADO"},
+      {"reclamante": "JOSE MARCIO DE ANDRADE DA SILVA", "area": "TRANSPORTE GRU", "vara": "VARA DE GUARULHOS", "pleito": "Acumulo, desvio de função, FGTS, Horas Extras, Insalubridade", "causa": 72772.37, "sentenca": 5552.65, "status": "FINALIZADO"},
+      {"reclamante": "BRUNO DA CRUZ ALVES PEQUENO", "area": "TRANSPORTE GRU", "vara": "VARA DE GUARULHOS", "pleito": "FGTS, Insalubridade, Dano Moral, Reversão da Rescisão Indireta", "causa": 37555.8, "sentenca": 1500.0, "status": "FINALIZADO"},
+      {"reclamante": "SILVANA ALVES PEREIRA", "area": "TRANSPORTE EMBU", "vara": "VARA DO EMBU DAS ARTES", "pleito": "Reversão Justa Causa", "causa": 0.0, "sentenca": 0.0, "status": "AGUARDANDO"},
+      {"reclamante": "CAROLINA DE SOUSA PEDROSA", "area": "ADM GRU", "vara": "VARA DE GUARULHOS", "pleito": "Insalubridade, Dano Moral,", "causa": 22172.05, "sentenca": 4000.0, "status": "FINALIZADO"},
+      {"reclamante": "ANDREW DE ARAUJO MONTEIRO", "area": "TRANSPORTE GRU", "vara": "VARA DE GUARULHOS", "pleito": "Resc. Indireta", "causa": 0.0, "sentenca": 0.0, "status": "AGUARDANDO"},
+      {"reclamante": "GINO LIBERATO DA SILVA", "area": "TRANSPORTE GRU", "vara": "VARA DE GUARULHOS", "pleito": "Insalubridade, Periculosidade, Horas Extras, Adc Noturno, Intervalo, Desvio/Acumulo de Função, Dano Moral", "causa": 80000.0, "sentenca": 5000.0, "status": "FINALIZADO"},
+      {"reclamante": "RAFAEL BAPTISTA PEREIRA GOMES", "area": "LOGÍSTICA EMBU", "vara": "VARA DO EMBU DAS ARTES", "pleito": "Acumulo de função, Insalubridade e vinculo empregaticio", "causa": 0.0, "sentenca": 0.0, "status": "AGUARDANDO"},
+      {"reclamante": "BRUNO DA CRUZ ALVES PEQUENO", "area": "TRANSPORTE GRU", "vara": "VARA DE GUARULHOS", "pleito": "FGTS, Insalubridade, Dano Moral", "causa": 37555.8, "sentenca": 0.0, "status": "ARQUIVADO"},
+      {"reclamante": "VINICIUS LOPES SOARES", "area": "TRANSPORTE - FILIAL MG", "vara": "VARA DE BELO HORIZONTE", "pleito": "Horas Extras, Intervalo, Acumulo de Função", "causa": 0.0, "sentenca": 0.0, "status": "AGUARDANDO"},
+      {"reclamante": "CINTIA OLIVEIRA COSTA", "area": "TRANSPORTE EMBU", "vara": "VIDEO CONFERÊNCIA", "pleito": "FGTS, Dano Moral", "causa": 0.0, "sentenca": 0.0, "status": "AGUARDANDO"},
+      {"reclamante": "ROBERTA MARTINHA DA SILVA", "area": "ADM GRU", "vara": "VARA DE GUARULHOS", "pleito": "Horas Extras / Verbas", "causa": 0.0, "sentenca": 0.0, "status": "AGUARDANDO"},
+      {"reclamante": "LUIZ FERNANDO RIBEIRO DA SILVA", "area": "TRANSPORTE EMBU", "vara": "VARA DO EMBU DAS ARTES", "pleito": "FGTS atraso, Descontos indevidos, Danos morais, Horas extras 100%", "causa": 0.0, "sentenca": 0.0, "status": "AGUARDANDO"}
+    ];
+
+    const AUDITED_HE_ROWS = [
+      { mes: 'Jan', area: 'Transporte', he25: 22404.58, he26: 24457.37, varHE: '+9,16%', pc25: 497.88, pc26: 509.53, varPC: '+2,34%', col25: 45, col26: 48 },
+      { mes: 'Jan', area: 'Logística', he25: 5222.69, he26: 8903.87, varHE: '+70,48%', pc25: 116.06, pc26: 370.99, varPC: '+219,66%', col25: 45, col26: 24 },
+      { mes: 'Jan', area: 'SG&A', he25: 3707.99, he26: 1433.66, varHE: '-61,34%', pc25: 176.57, pc26: 102.40, varPC: '-42,00%', col25: 21, col26: 14 },
+      { mes: 'Fev', area: 'Transporte', he25: 32173.00, he26: 9460.24, varHE: '-70,60%', pc25: 643.46, pc26: 242.57, varPC: '-62,30%', col25: 50, col26: 39 },
+      { mes: 'Fev', area: 'Logística', he25: 5729.24, he26: 3307.77, varHE: '-42,27%', pc25: 108.10, pc26: 174.09, varPC: '+61,05%', col25: 53, col26: 19 },
+      { mes: 'Fev', area: 'SG&A', he25: 3317.83, he26: 3688.05, varHE: '+11,16%', pc25: 184.32, pc26: 335.28, varPC: '+81,90%', col25: 18, col26: 11 },
+      { mes: 'Mar', area: 'Transporte', he25: 23114.50, he26: 6214.30, varHE: '-73,11%', pc25: 471.72, pc26: 172.62, varPC: '-63,41%', col25: 49, col26: 36 },
+      { mes: 'Mar', area: 'Logística', he25: 4890.30, he26: 2140.15, varHE: '-56,24%', pc25: 97.80, pc26: 118.89, varPC: '+21,56%', col25: 50, col26: 18 },
+      { mes: 'Mar', area: 'SG&A', he25: 2351.21, he26: 1543.26, varHE: '-34,36%', pc25: 130.62, pc26: 171.47, varPC: '+31,27%', col25: 18, col26: 9 },
+      { mes: 'Abr', area: 'Transporte', he25: 28450.80, he26: 12480.90, varHE: '-56,13%', pc25: 569.01, pc26: 328.44, varPC: '-42,28%', col25: 50, col26: 38 },
+      { mes: 'Abr', area: 'Logística', he25: 6120.40, he26: 2940.35, varHE: '-51,96%', pc25: 127.50, pc26: 154.75, varPC: '+21,37%', col25: 48, col26: 19 },
+      { mes: 'Abr', area: 'SG&A', he25: 3818.58, he26: 1823.02, varHE: '-52,26%', pc25: 212.14, pc26: 202.56, varPC: '-4,52%', col25: 18, col26: 9 },
+      { mes: 'Mai', area: 'Transporte', he25: 18920.40, he26: 10450.60, varHE: '-44,77%', pc25: 402.56, pc26: 282.45, varPC: '-29,84%', col25: 47, col26: 37 },
+      { mes: 'Mai', area: 'Logística', he25: 3950.15, he26: 2890.40, varHE: '-26,83%', pc25: 87.78, pc26: 160.58, varPC: '+82,93%', col25: 45, col26: 18 },
+      { mes: 'Mai', area: 'SG&A', he25: 2015.96, he26: 1789.78, varHE: '-11,22%', pc25: 118.59, pc26: 223.72, varPC: '+88,65%', col25: 17, col26: 8 },
+      { mes: 'Jun', area: 'Transporte', he25: 15214.30, he26: 10563.97, varHE: '-30,57%', pc25: 338.10, pc26: 310.70, varPC: '-8,10%', col25: 45, col26: 34 },
+      { mes: 'Jun', area: 'Logística', he25: 2932.85, he26: 2680.52, varHE: '-8,60%', pc25: 68.20, pc26: 178.70, varPC: '+162,02%', col25: 43, col26: 15 },
+      { mes: 'Jun', area: 'SG&A', he25: 2165.47, he26: 2323.29, varHE: '+7,29%', pc25: 135.34, pc26: 290.41, varPC: '+114,58%', col25: 16, col26: 8 }
+    ];
+
+    const AUDITED_SAMPLE_DATA = {
+      isLoaded: true,
+      folha: {
+        all: {
+          name: 'Consolidado 1º Semestre 2026',
+          folha26: 4062133.53,
+          folha25: 5013722.20,
+          varFolha: '-18,98%',
+          fatBruto: 38009523.14,
+          fatComp: '10,69%',
+          he26: 109091.50,
+          he25: 186500.25,
+          varHE: '-41,51%',
+          hePC26: 228.39,
+          hePC25: 246.20,
+          varHEPC: '-7,23%',
+          hc: 81,
+          hcInic: 118,
+          hcFoot: 'Início: 118 posições',
+          varHC: '-31,36%',
+          folhaPC26: 6915.00,
+          folhaPC25: 7081.53,
+          varFolhaPC: '-2,35%',
+          folhaArea26: [2268459.28, 1007244.63, 786429.62],
+          feriasVal: 134478.46,
+          feriasQtd: '43 GOZOS',
+          feriasFoot: 'Média Mensal: R$ 22.413,08',
+          rescisaoVal: 262651.82,
+          rescisaoQtd: '51 RESCISÕES',
+          rescisaoFoot: 'Média / Rescisão: R$ 5.150,03',
+          feriasArea: [75867.05, 26502.74, 32108.67]
+        },
+        Jan: { name: 'Janeiro / 2026', folha26: 742239.69, folha25: 816121.97, varFolha: '-9,05%', fatBruto: 5736176.76, fatComp: '13,91%', he26: 34794.90, he25: 31335.26, varHE: '+11,04%', hePC26: 404.59, hePC25: 282.30, varHEPC: '+43,32%', hc: 114, hcInic: 118, hcFoot: '86 colabs com HE', varHC: '-3,39%', folhaPC26: 6510.87, folhaPC25: 6916.29, varFolhaPC: '-5,86%', feriasVal: 30637.32, feriasQtd: '12 GOZOS', feriasFoot: 'Transporte: R$ 15,5k', rescisaoVal: 48210.15, rescisaoQtd: '9 RESCISÕES', rescisaoFoot: 'Média: R$ 5.356,68', folhaArea26: [451574.16, 163771.78, 126893.75], feriasArea: [15574.32, 10208.50, 4854.50] },
+        Fev: { name: 'Fevereiro / 2026', folha26: 648814.21, folha25: 841315.16, varFolha: '-22,88%', fatBruto: 4941341.50, fatComp: '13,65%', he26: 16456.06, he25: 41220.07, varHE: '-60,08%', hePC26: 238.49, hePC25: 340.66, varHEPC: '-29,99%', hc: 105, hcInic: 114, hcFoot: '69 colabs com HE', varHC: '-7,89%', folhaPC26: 6179.18, folhaPC25: 7130.00, varFolhaPC: '-13,34%', feriasVal: 13006.29, feriasQtd: '5 GOZOS', feriasFoot: 'Transporte: R$ 6,4k', rescisaoVal: 24150.00, rescisaoQtd: '5 RESCISÕES', rescisaoFoot: 'Média: R$ 4.830,00', folhaArea26: [367039.28, 154827.71, 126947.22], feriasArea: [6431.79, 2263.23, 4311.27] },
+        Mar: { name: 'Março / 2026', folha26: 651033.35, folha25: 849172.53, varFolha: '-23,33%', fatBruto: 4972101.85, fatComp: '13,63%', he26: 9897.71, he25: 30356.01, varHE: '-67,39%', hePC26: 157.11, hePC25: 248.82, varHEPC: '-36,86%', hc: 98, hcInic: 105, hcFoot: '63 colabs com HE', varHC: '-6,67%', folhaPC26: 6643.20, folhaPC25: 7196.38, varFolhaPC: '-7,69%', feriasVal: 16945.52, feriasQtd: '5 GOZOS', feriasFoot: 'Logística: R$ 7,8k', rescisaoVal: 31020.40, rescisaoQtd: '6 RESCISÕES', rescisaoFoot: 'Média: R$ 5.170,06', folhaArea26: [361476.69, 151224.81, 138331.85], feriasArea: [6923.15, 2201.19, 7821.18] },
+        Abr: { name: 'Abril / 2026', folha26: 722981.75, folha25: 891280.11, varFolha: '-18,88%', fatBruto: 5049575.25, fatComp: '14,89%', he26: 17244.27, he25: 38389.78, varHE: '-55,08%', hePC26: 229.92, hePC25: 304.68, varHEPC: '-24,54%', hc: 94, hcInic: 98, hcFoot: '75 colabs com HE', varHC: '-4,08%', folhaPC26: 7691.30, folhaPC25: 7553.22, varFolhaPC: '+1,83%', feriasVal: 21074.46, feriasQtd: '6 GOZOS', feriasFoot: 'Transporte: R$ 12,4k', rescisaoVal: 62140.80, rescisaoQtd: '12 RESCISÕES', rescisaoFoot: 'Média: R$ 5.178,40', folhaArea26: [399203.72, 169480.29, 154297.74], feriasArea: [12475.69, 4662.83, 3935.94] },
+        Mai: { name: 'Maio / 2026', folha26: 660466.80, folha25: 857172.73, varFolha: '-22,95%', fatBruto: 4691616.43, fatComp: '14,91%', he26: 15130.78, he25: 24886.51, varHE: '-39,20%', hePC26: 240.17, hePC25: 212.71, varHEPC: '+12,91%', hc: 87, hcInic: 94, hcFoot: '63 colabs com HE', varHC: '-7,45%', folhaPC26: 7591.57, folhaPC25: 7264.18, varFolhaPC: '+4,51%', feriasVal: 37470.68, feriasQtd: '9 GOZOS', feriasFoot: 'Transporte: R$ 34,4k', rescisaoVal: 35800.22, rescisaoQtd: '7 RESCISÕES', rescisaoFoot: 'Média: R$ 5.114,31', folhaArea26: [367767.95, 162775.87, 129922.98], feriasArea: [34462.10, 3008.58, 0.00] },
+        Jun: { name: 'Junho / 2026', folha26: 636597.73, folha25: 758659.70, varFolha: '-16,09%', fatBruto: 3628588.94, fatComp: '19,30%', he26: 15567.78, he25: 20312.62, varHE: '-23,36%', hePC26: 293.73, hePC25: 213.82, varHEPC: '+37,37%', hc: 81, hcInic: 87, hcFoot: '53 colabs com HE', varHC: '-6,90%', folhaPC26: 7859.23, folhaPC25: 6429.32, varFolhaPC: '+22,24%', feriasVal: 15344.19, feriasQtd: '6 GOZOS', feriasFoot: 'Logística: R$ 11,1k', rescisaoVal: 61330.25, rescisaoQtd: '12 RESCISÕES', rescisaoFoot: 'Média: R$ 5.110,85', folhaArea26: [321397.48, 205164.17, 110036.08], feriasArea: [0.00, 4158.41, 11185.78] }
+      },
+      afastamentos: [
+        { nome: 'JESLANE ALMEIDA COELHO', area: 'TRANSPORTE', tipo: 'LICENÇA MATERNIDADE', data: '22/10/2025', impacto: 'Salário Maternidade', status: 'EM VIGÊNCIA' },
+        { nome: 'VANESSA CONCEICAO ALVES DA SILVA', area: 'LOGÍSTICA', tipo: 'LICENÇA MATERNIDADE', data: '06/11/2025', impacto: 'Salário Maternidade', status: 'EM VIGÊNCIA' },
+        { nome: 'RENATA DOS SANTOS FRANCO', area: 'LOGÍSTICA', tipo: 'AFASTAMENTO INSS', data: '27/05/2026', impacto: 'Auxílio Doença Previdenciário', status: 'EM ANDAMENTO' },
+        { nome: 'THAINA SILVA MONI', area: 'LOGÍSTICA', tipo: 'LICENÇA MATERNIDADE', data: '08/06/2026', impacto: 'Salário Maternidade', status: 'EM VIGÊNCIA' },
+        { nome: 'VANESSA DA SILVA VIEIRA', area: 'LOGÍSTICA', tipo: 'LICENÇA MATERNIDADE', data: '30/06/2026', impacto: 'Salário Maternidade', status: 'EM VIGÊNCIA' }
+      ],
+      processos: JSON.parse(JSON.stringify(AUDITED_PROCESSOS_LIST)),
+      charts: {
+        folhaEvolucao25: [816121.97, 841315.16, 849172.53, 891280.11, 857172.73, 758659.70],
+        folhaEvolucao26: [742239.69, 648814.21, 651033.35, 722981.75, 660466.80, 636597.73],
+        heEvolucao25: [31335.26, 41220.07, 30356.01, 38389.78, 24886.51, 20312.62],
+        heEvolucao26: [34794.90, 16456.06, 9897.71, 17244.27, 15130.78, 15567.78],
+        juridicoMitig: [1224905.13, 143010.64],
+        feriasArea: [75867.05, 26502.74, 32108.67],
+        feriasEvolucao: [30637.32, 13006.29, 16945.52, 21074.46, 37470.68, 15344.19],
+        
+        monthsLabels12: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+        fatBruto12M: [5736176.76, 4941341.50, 4972101.85, 5049575.25, 4691616.43, 3628588.94],
+        // CUSTO DA FOLHA TOTAL = FOLHA CLT + ENFOK TERCEIRIZADA (CONFORME SOLICITADO)
+        folhaCusto12M: [798012.23, 674663.57, 677661.02, 751887.04, 699628.40, 700186.48],
+        fatComprometimento: [13.91, 13.65, 13.63, 14.89, 14.91, 19.30],
+
+        flexCustoMeses: [90567.44, 42305.42, 36525.38, 46149.56, 54292.38, 79156.53],
+        flexCompFat: [1.58, 0.86, 0.73, 0.91, 1.16, 2.18],
+
+        compHE25: [134834.66, 29825.63, 21839.96],
+        compHE26: [73627.38, 22863.06, 12601.06],
+        compPC25: [438.30, 107.39, 192.92],
+        compPC26: [321.51, 170.98, 192.69],
+        custoAdmissoes: [38958.91, 20648.28, 16719.29],
+        custoDemissoes: [224183.81, 9810.68, 28657.33],
+        motivosDemissao: [21, 23, 6, 4, 2],
+        enfokMeses: [55772.54, 25849.36, 26627.67, 28905.29, 39161.60, 63588.75],
+        folhaCltMeses: [742239.69, 648814.21, 651033.35, 722981.75, 660466.80, 636597.73],
+        enfokDistribuicaoArea: [196661.39, 24475.04, 18768.78],
+        
+        semestresLabels: ['1º Sem 2025', '1º Sem 2026 (Var %)'],
+        histFolhaSemestral: [5013722.20, 4062133.53],
+        histHESemestral: [186500.25, 109091.50],
+        histRescisaoSemestral: [232455.96, 262651.82],
+
+        atestadosTransp: [57, 44, 50, 53, 43, 34],
+        atestadosLog: [5, 22, 2, 8, 4, 1],
+        atestadosSga: [4, 3, 5, 3, 4, 4],
+        faltasTransp: [35, 25, 28, 37, 14, 14],
+        faltasLog: [1, 1, 1, 0, 0, 1],
+        faltasSga: [1, 1, 25, 0, 0, 0],
+        turnoverAdmissoes: [4, 3, 5, 4, 1, 1],
+        turnoverDemissoes: [9, 5, 6, 12, 7, 12],
+        turnoverTaxas: [5.60, 3.65, 5.42, 8.33, 4.42, 7.74],
+        passivoCausa: [601949.35, 633217.96, 132748.46],
+        passivoSentenca: [92733.40, 28277.24, 22000.00],
+        pleitosFreq: [20, 18, 15, 8, 7, 7, 6]
+      }
+    };
+
+    let currentAppData = JSON.parse(JSON.stringify(AUDITED_SAMPLE_DATA));
+
+    const tourSteps = [
+      { elementId: 'kpiFolhaPerCapitaCard', tabId: 'tab-visao-geral', badge: 'ETAPA 1 DE 6 — EFICIÊNCIA DE PESSOAL', title: 'Eficiência Geral de Pessoal', body: 'Comparativo automático com 2025 calculado em tempo real.' },
+      { elementId: 'kpiRibbonGridTarget', tabId: 'tab-visao-geral', badge: 'ETAPA 2 DE 6 — CARDS EXECUTIVOS', title: 'Cards Estratégicos', body: 'Faturamento Bruto (R$ 38,00M), Férias e Rescisão integrados no cabeçalho.' },
+      { elementId: 'scenarioModuleTarget', tabId: 'tab-folha', badge: 'ETAPA 3 DE 6 — SIMULADOR DE CENÁRIO', title: 'Cenário Custo x Faturamento', body: 'Relação detalhada de Horas Extras e Enfok sobre o faturamento da área.' },
+      { elementId: 'fatVsFolhaTargetCard', tabId: 'tab-folha', badge: 'ETAPA 4 DE 6 — RECEITA X FOLHA', title: 'Produtividade Consolidada', body: 'Comparativo do Faturamento com a Folha Completa (CLT + Enfok).' },
+      { elementId: 'feriasAreaCardTarget', tabId: 'tab-ferias', badge: 'ETAPA 5 DE 6 — GESTÃO DE FÉRIAS', title: 'Distribuição Auditada', body: 'Detalhamento com SG&A e áreas operacionais isoladas.' },
+      { elementId: 'processosTableTarget', tabId: 'tab-juridico', badge: 'ETAPA 6 DE 6 — PASSIVO JURÍDICO', title: 'Painel Trabalhista', body: 'Visualização de todos os processos e edição de status.' }
+    ];
+
+    function startTour(forceStart = false) {
+      if (!forceStart && localStorage.getItem('mindlog_tour_seen_v3') === 'true') return;
+      currentTourStep = 0;
+      document.getElementById('tourBackdrop').classList.add('active');
+      document.getElementById('tourPopover').classList.add('active');
+      renderTourStep();
+    }
+
+    function renderTourStep() {
+      const step = tourSteps[currentTourStep];
+      if (!step) return;
+
+      if (step.tabId) {
+        const targetTabBtn = document.querySelector(`button[onclick*="'${step.tabId}'"]`);
+        if (targetTabBtn) targetTabBtn.click();
+      }
+
+      document.getElementById('tourStepBadge').textContent = step.badge;
+      document.getElementById('tourTitle').textContent = step.title;
+      document.getElementById('tourBody').textContent = step.body;
+      document.getElementById('tourPrevBtn').style.display = currentTourStep === 0 ? 'none' : 'inline-flex';
+      document.getElementById('tourNextBtn').textContent = currentTourStep === tourSteps.length - 1 ? 'Concluir' : 'Próximo';
+
+      document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+
+      setTimeout(() => {
+        const targetEl = document.getElementById(step.elementId);
+        if (targetEl) {
+          targetEl.classList.add('tour-highlight');
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
+
+    function nextTourStep() {
+      if (currentTourStep < tourSteps.length - 1) {
+        currentTourStep++;
+        renderTourStep();
+      } else {
+        endTour();
+      }
+    }
+
+    function prevTourStep() {
+      if (currentTourStep > 0) {
+        currentTourStep--;
+        renderTourStep();
+      }
+    }
+
+    function endTour() {
+      if (document.getElementById('tourDontShowAgain').checked) {
+        localStorage.setItem('mindlog_tour_seen_v3', 'true');
+      }
+      document.getElementById('tourBackdrop').classList.remove('active');
+      document.getElementById('tourPopover').classList.remove('active');
+      document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastMessage');
+      const toastTxt = document.getElementById('toastText');
+      if (toast && toastTxt) {
+        toastTxt.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => { toast.classList.remove('show'); }, 4000);
+      }
+    }
+
+    function openUploadModal() { document.getElementById('uploadModal').classList.add('open'); }
+    function closeUploadModal() { document.getElementById('uploadModal').classList.remove('open'); }
+    function openColorModal() { document.getElementById('colorModal').classList.add('open'); }
+    function closeColorModal() { document.getElementById('colorModal').classList.remove('open'); }
+
+    function updateAreaColor(area, hex) {
+      areaColors[area] = hex;
+      document.documentElement.style.setProperty(`--color-${area}`, hex);
+      for (let k in charts) if (charts[k]) charts[k].update();
+    }
+
+    function applyPreset(transp, logist, sga) {
+      updateAreaColor('transporte', transp);
+      updateAreaColor('logistica', logist);
+      updateAreaColor('sga', sga);
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const themeBtn = document.getElementById('themeBtn');
+      if (currentTheme === 'light') {
+        html.setAttribute('data-theme', 'dark');
+        currentTheme = 'dark';
+        themeBtn.textContent = 'Modo Claro';
+      } else {
+        html.setAttribute('data-theme', 'light');
+        currentTheme = 'light';
+        themeBtn.textContent = 'Modo Escuro';
+      }
+      updateChartColors();
+    }
+
+    function toggleEditMode(btn) {
+      editModeActive = !editModeActive;
+      const banner = document.getElementById('editBanner');
+      const editables = document.querySelectorAll('.editable-element');
+      btn.classList.toggle('active', editModeActive);
+      banner.classList.toggle('visible', editModeActive);
+      editables.forEach(el => el.setAttribute('contenteditable', editModeActive ? 'true' : 'false'));
+      if (editModeActive) showToast('Modo de Edição ativado: você pode renomear qualquer texto na tela!');
+    }
+
+    function saveTextEdits() {
+      const editables = document.querySelectorAll('.editable-element');
+      const savedTexts = {};
+      editables.forEach(el => { if (el.id) savedTexts[el.id] = el.innerHTML; });
+      localStorage.setItem('mindlog_texts_v9', JSON.stringify(savedTexts));
+      showToast('Alterações de texto salvas com sucesso!');
+    }
+
+    function loadSavedTextEdits() {
+      try {
+        const saved = JSON.parse(localStorage.getItem('mindlog_texts_v9') || '{}');
+        for (let id in saved) {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = saved[id];
+        }
+      } catch(e) {}
+    }
+
+    function resetTextEdits() {
+      if (confirm('Deseja restaurar todos os textos originais?')) {
+        localStorage.removeItem('mindlog_texts_v9');
+        location.reload();
+      }
+    }
+
+    function resetSingleChartLabels(chartId) {
+      const chart = charts[chartId];
+      if (chart) {
+        chart._labelOffsets = {};
+        chart.render();
+        showToast('Posições dos rótulos redefinidas!');
+      }
+    }
+
+    function resetAllLabelOffsets() {
+      for (let k in charts) {
+        if (charts[k]) {
+          charts[k]._labelOffsets = {};
+          charts[k].render();
+        }
+      }
+      showToast('Todos os rótulos voltaram à posição original!');
+    }
+
+    function clearAllData() {
+      if (confirm('Deseja zerar todos os dados e indicadores do painel?')) {
+        currentAppData.isLoaded = false;
+        
+        for (let k in currentAppData.folha) {
+          currentAppData.folha[k].folha26 = 0;
+          currentAppData.folha[k].folha25 = 0;
+          currentAppData.folha[k].varFolha = '0,00%';
+          currentAppData.folha[k].fatBruto = 0;
+          currentAppData.folha[k].fatComp = '0,00%';
+          currentAppData.folha[k].he26 = 0;
+          currentAppData.folha[k].he25 = 0;
+          currentAppData.folha[k].varHE = '0,00%';
+          currentAppData.folha[k].hePC26 = 0;
+          currentAppData.folha[k].hePC25 = 0;
+          currentAppData.folha[k].varHEPC = '0,00%';
+          currentAppData.folha[k].hc = 0;
+          currentAppData.folha[k].hcFoot = '-';
+          currentAppData.folha[k].varHC = '0,00%';
+          currentAppData.folha[k].folhaPC26 = 0;
+          currentAppData.folha[k].folhaPC25 = 0;
+          currentAppData.folha[k].varFolhaPC = '0,00%';
+          currentAppData.folha[k].feriasVal = 0;
+          currentAppData.folha[k].feriasQtd = '0 GOZOS';
+          currentAppData.folha[k].feriasFoot = '-';
+          currentAppData.folha[k].rescisaoVal = 0;
+          currentAppData.folha[k].rescisaoQtd = '0 RESCISÕES';
+          currentAppData.folha[k].rescisaoFoot = '-';
+          currentAppData.folha[k].feriasArea = [0, 0, 0];
+        }
+
+        for (let c in currentAppData.charts) {
+          if (Array.isArray(currentAppData.charts[c])) {
+            currentAppData.charts[c] = currentAppData.charts[c].map(() => 0);
+          }
+        }
+
+        currentAppData.afastamentos = [];
+        currentAppData.processos = [];
+
+        updateAllDashboardViews();
+
+        document.getElementById('statusDotIndicator').className = 'status-dot empty';
+        document.getElementById('txt-badge').textContent = 'Base Zerada';
+        
+        closeUploadModal();
+        showToast('Painel 100% zerado e pronto para novas planilhas!');
+      }
+    }
+
+    function switchTab(evt, tabId) {
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      if (evt && evt.currentTarget) evt.currentTarget.classList.add('active');
+
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+        for (let k in charts) {
+          if (charts[k]) {
+            charts[k].resize();
+            charts[k].update();
+          }
+        }
+      }, 50);
+    }
+
+    function setMonthFilter(month) {
+      document.getElementById('monthSelect').value = month;
+      applyMonthFilter(month);
+    }
+
+    function applyMonthFilter(month) {
+      selectedMonth = month;
+      const data = currentAppData.folha[month] || currentAppData.folha['all'];
+
+      document.querySelectorAll('.filter-pill-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-filter') === month);
+      });
+
+      const stTxt = document.getElementById('filterStatusText');
+      if (stTxt) stTxt.innerHTML = `Exibindo: <strong>${data.name}</strong>`;
+
+      const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
+      const setTxt = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+
+      setVal('kpi-val-folha', `<span class="unit">R$</span> ${data.folha26.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`);
+      setTxt('kpi-f-1', `vs R$ ${data.folha25.toLocaleString('pt-BR', {minimumFractionDigits: 2})} em 2025`);
+      setTxt('kpi-trend-folha', `${data.varFolha}`);
+
+      setVal('kpi-val-fat', `<span class="unit">R$</span> ${data.fatBruto.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`);
+      setTxt('kpi-f-fat', `Comprometimento Folha CLT`);
+      setTxt('kpi-trend-fat', data.fatComp || '10,69%');
+
+      setVal('kpi-val-he', `<span class="unit">R$</span> ${data.he26.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`);
+      setTxt('kpi-f-2', `vs R$ ${data.he25.toLocaleString('pt-BR', {minimumFractionDigits: 2})} em 2025`);
+      setTxt('kpi-trend-he', `${data.varHE}`);
+
+      setVal('kpi-val-hepc', `<span class="unit">R$</span> ${data.hePC26.toFixed(2).replace('.', ',')} <span class="unit" style="font-size:0.85rem;">/ colab</span>`);
+      setTxt('kpi-f-3', `vs R$ ${data.hePC25.toFixed(2).replace('.', ',')} em 2025`);
+      setTxt('kpi-trend-hepc', `${data.varHEPC}`);
+
+      setVal('kpi-val-hc', `${data.hc} <span class="unit" style="font-size:0.95rem;">colabs</span>`);
+      setTxt('kpi-f-4', data.hcFoot || 'Início: 118 posições');
+      setTxt('kpi-trend-hc', data.varHC);
+
+      setVal('kpi-val-folhapc', `<span class="unit">R$</span> ${data.folhaPC26.toLocaleString('pt-BR', {minimumFractionDigits: 2})} <span class="unit" style="font-size:0.85rem;">/ mês</span>`);
+      setTxt('kpi-f-5', `vs R$ ${data.folhaPC25.toLocaleString('pt-BR', {minimumFractionDigits: 2})} em 2025`);
+      const trendFPC = document.getElementById('kpi-trend-folhapc');
+      if (trendFPC) {
+        trendFPC.textContent = `${data.varFolhaPC}`;
+        trendFPC.className = `trend-indicator ${data.varFolhaPC.startsWith('-') ? 'trend-positive' : 'trend-negative'}`;
+      }
+
+      setVal('kpi-val-ferias-top', `<span class="unit">R$</span> ${data.feriasVal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`);
+      setTxt('kpi-tag-ferias-top', data.feriasQtd || '43 GOZOS');
+      setTxt('kpi-f-ferias-top', data.feriasFoot || 'Média Mensal: R$ 22.413,08');
+
+      setVal('kpi-val-rescisao-top', `<span class="unit">R$</span> ${data.rescisaoVal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`);
+      setTxt('kpi-tag-rescisao-top', data.rescisaoQtd || '51 RESCISÕES');
+      setTxt('kpi-f-rescisao-top', data.rescisaoFoot || 'Média / Rescisão: R$ 5.150,03');
+
+      if (charts.chartFeriasArea) {
+        charts.chartFeriasArea.data.datasets[0].data = data.feriasArea || [0,0,0];
+        charts.chartFeriasArea.update();
+      }
+
+      const rows = document.querySelectorAll('#tableFeriasDetalhamento tbody tr');
+      rows.forEach(r => {
+        const rMonth = r.getAttribute('data-month');
+        if (!rMonth || month === 'all') {
+          r.style.display = '';
+          r.classList.remove('highlighted-month');
+        } else if (rMonth === month) {
+          r.style.display = '';
+          r.classList.add('highlighted-month');
+        } else {
+          r.style.display = 'none';
+        }
+      });
+
+      if (month !== 'all') {
+        const scMonth = document.getElementById('scenarioMonthSelect');
+        if (scMonth) scMonth.value = month;
+      }
+      updateScenarioWidget();
+    }
+
+    // ATUALIZAÇÃO DO SIMULADOR DE CENÁRIO BASEADO NO FATURAMENTO DA ÁREA
+    function updateScenarioWidget() {
+      const month = document.getElementById('scenarioMonthSelect') ? document.getElementById('scenarioMonthSelect').value : 'Jan';
+      const area = document.getElementById('scenarioAreaSelect') ? document.getElementById('scenarioAreaSelect').value : 'Transporte';
+
+      const monthNames = { Jan: 'JANEIRO/2026', Fev: 'FEVEREIRO/2026', Mar: 'MARÇO/2026', Abr: 'ABRIL/2026', Mai: 'MAIO/2026', Jun: 'JUNHO/2026' };
+      const titleEl = document.getElementById('scenarioBannerTitle');
+      if (titleEl) titleEl.textContent = `CENÁRIO - ${monthNames[month] || month} (${area.toUpperCase()})`;
+
+      const data = currentAppData.folha[month] || currentAppData.folha['Jan'];
+      
+      let fat = 0;
+      let heVal = 0, enfVal = 0, cmVal = data.folhaPC26;
+
+      if (!currentAppData.isLoaded) {
+        fat = 0; heVal = 0; enfVal = 0; cmVal = 0;
+      } else if (area === 'Transporte') {
+        fat = FATURAMENTO_DATA.Transporte[month] || 4657787.74;
+        heVal = month === 'Jan' ? 24457.37 : (month === 'Fev' ? 9460.24 : (month === 'Mar' ? 6214.30 : (month === 'Abr' ? 12480.90 : (month === 'Mai' ? 10450.60 : 10563.97))));
+        enfVal = month === 'Jan' ? 41530.69 : (month === 'Fev' ? 23640.61 : (month === 'Mar' ? 19351.68 : (month === 'Abr' ? 16891.13 : (month === 'Mai' ? 32535.35 : 62711.93))));
+        cmVal = 6640.80;
+      } else if (area === 'Logística') {
+        fat = FATURAMENTO_DATA.Logistica[month] || 1078389.02;
+        heVal = month === 'Jan' ? 8903.87 : (month === 'Fev' ? 3307.77 : (month === 'Mar' ? 2140.15 : (month === 'Abr' ? 2940.35 : (month === 'Mai' ? 2890.40 : 2680.52))));
+        enfVal = month === 'Jan' ? 9606.03 : (month === 'Fev' ? 441.75 : (month === 'Mar' ? 3520.81 : (month === 'Abr' ? 9363.66 : (month === 'Mai' ? 1104.38 : 438.41))));
+        cmVal = 5075.75;
+      } else if (area === 'SG&A') {
+        // SG&A corporativo utiliza o faturamento total da empresa (Transporte + Logística)
+        fat = FATURAMENTO_DATA.Total[month] || 5736176.76;
+        heVal = month === 'Jan' ? 1433.66 : (month === 'Fev' ? 3688.05 : (month === 'Mar' ? 1543.26 : (month === 'Abr' ? 1823.02 : (month === 'Mai' ? 1789.78 : 2323.29))));
+        enfVal = month === 'Jan' ? 4635.82 : (month === 'Fev' ? 1767.00 : (month === 'Mar' ? 3755.18 : (month === 'Abr' ? 2650.50 : (month === 'Mai' ? 5521.87 : 438.41))));
+        cmVal = 7798.66;
+      } else {
+        fat = FATURAMENTO_DATA.Total[month] || 5736176.76;
+        heVal = data.he26;
+        const enfokList = [55772.54, 25849.36, 26627.67, 28905.29, 39161.60, 63588.75];
+        const mIdx = ['Jan','Fev','Mar','Abr','Mai','Jun'].indexOf(month);
+        enfVal = enfokList[mIdx >= 0 ? mIdx : 0];
+        cmVal = data.folhaPC26;
+      }
+
+      const totFlex = heVal + enfVal;
+      const heFat = fat > 0 ? ((heVal / fat) * 100).toFixed(2) + '%' : '0,00%';
+      const enfFat = fat > 0 ? ((enfVal / fat) * 100).toFixed(2) + '%' : '0,00%';
+      const totFat = fat > 0 ? ((totFlex / fat) * 100).toFixed(2) + '%' : '0,00%';
+
+      const heCm = cmVal > 0 ? (heVal / cmVal).toFixed(2) : '0,00';
+      const enfCm = cmVal > 0 ? (enfVal / cmVal).toFixed(2) : '0,00';
+      const totCm = cmVal > 0 ? (totFlex / cmVal).toFixed(2) : '0,00';
+
+      const setT = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+      setT('scen-fat-val', `R$ ${fat.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`);
+      setT('scen-cm-val', `R$ ${cmVal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`);
+
+      setT('scen-row-he-val', `R$ ${heVal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`);
+      setT('scen-row-he-fat', heFat);
+      setT('scen-row-he-cm', heCm);
+
+      setT('scen-row-enf-val', `R$ ${enfVal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`);
+      setT('scen-row-enf-fat', enfFat);
+      setT('scen-row-enf-cm', enfCm);
+
+      setT('scen-row-tot-val', `R$ ${totFlex.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`);
+      setT('scen-row-tot-fat', totFat);
+      setT('scen-row-tot-cm', totCm);
+
+      setT('scen-final-ratio', totFat);
+    }
+
+    function filterFatChartUntil(limitIndex) {
+      const idx = parseInt(limitIndex);
+      const d = currentAppData.charts;
+      if (!charts.chartFatXFolha) return;
+
+      charts.chartFatXFolha.data.labels = d.monthsLabels12.slice(0, idx + 1);
+      charts.chartFatXFolha.data.datasets[0].data = d.fatBruto12M.slice(0, idx + 1);
+      charts.chartFatXFolha.data.datasets[1].data = d.folhaCusto12M.slice(0, idx + 1);
+      charts.chartFatXFolha.data.datasets[2].data = d.fatComprometimento.slice(0, idx + 1);
+      charts.chartFatXFolha.update();
+    }
+
+    function formatChartValue(val, chartId) {
+      if (typeof val !== 'number') return String(val);
+      if (chartId === 'chartFatXFolha' || chartId === 'chartJuridicoMitigacao' || chartId === 'chartTurnoverTaxa' || chartId === 'chartFlexVsFat') {
+        if (val <= 100) return val.toFixed(1).replace('.', ',') + '%';
+      }
+      if (chartId === 'chartCompAcumuladoPC') {
+        return 'R$ ' + val.toFixed(0);
+      }
+      if (Math.abs(val) >= 1000000) {
+        return 'R$ ' + (val / 1000000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 2 }) + 'M';
+      }
+      if (Math.abs(val) >= 1000) {
+        return 'R$ ' + (val / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + 'k';
+      }
+      return Number.isInteger(val) ? String(val) : val.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    }
+
+    const draggableDataLabelsPlugin = {
+      id: 'draggableDataLabels',
+      afterInit(chart) {
+        chart._showLabels = true;
+        chart._labelOffsets = chart._labelOffsets || {};
+        chart._labelBoxes = [];
+
+        const canvas = chart.canvas;
+        if (!canvas._dragAttached) {
+          canvas._dragAttached = true;
+          let activeDrag = null;
+
+          canvas.addEventListener('mousedown', (e) => {
+            if (!chart._showLabels || !chart._labelBoxes) return;
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            for (let i = chart._labelBoxes.length - 1; i >= 0; i--) {
+              const b = chart._labelBoxes[i];
+              if (mouseX >= b.x1 && mouseX <= b.x2 && mouseY >= b.y1 && mouseY <= b.y2) {
+                const key = `${b.dsIdx}_${b.dataIdx}`;
+                chart._labelOffsets[key] = chart._labelOffsets[key] || { dx: 0, dy: 0 };
+                activeDrag = {
+                  key: key,
+                  startX: e.clientX,
+                  startY: e.clientY,
+                  origDx: chart._labelOffsets[key].dx,
+                  origDy: chart._labelOffsets[key].dy
+                };
+                canvas.style.cursor = 'grabbing';
+                e.preventDefault();
+                break;
+              }
+            }
+          });
+
+          window.addEventListener('mousemove', (e) => {
+            if (!activeDrag) {
+              if (chart._showLabels && chart._labelBoxes) {
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                let overLabel = false;
+                for (let i = 0; i < chart._labelBoxes.length; i++) {
+                  const b = chart._labelBoxes[i];
+                  if (mouseX >= b.x1 && mouseX <= b.x2 && mouseY >= b.y1 && mouseY <= b.y2) {
+                    overLabel = true;
+                    break;
+                  }
+                }
+                if (overLabel && canvas.style.cursor !== 'grabbing') {
+                  canvas.style.cursor = 'grab';
+                  canvas.title = 'Clique e arraste para reposicionar o rótulo';
+                } else if (!overLabel && canvas.style.cursor === 'grab') {
+                  canvas.style.cursor = 'default';
+                  canvas.title = '';
+                }
+              }
+              return;
+            }
+
+            const deltaX = e.clientX - activeDrag.startX;
+            const deltaY = e.clientY - activeDrag.startY;
+            chart._labelOffsets[activeDrag.key] = {
+              dx: activeDrag.origDx + deltaX,
+              dy: activeDrag.origDy + deltaY
+            };
+            chart.render();
+          });
+
+          window.addEventListener('mouseup', () => {
+            if (activeDrag) {
+              activeDrag = null;
+              canvas.style.cursor = 'default';
+            }
+          });
+        }
+      },
+      afterDraw(chart) {
+        if (!chart._showLabels) {
+          chart._labelBoxes = [];
+          return;
+        }
+        const ctx = chart.ctx;
+        ctx.save();
+        ctx.font = '500 10px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const bgBadge = isDark ? 'rgba(15, 23, 42, 0.92)' : 'rgba(255, 255, 255, 0.95)';
+        const textBadge = isDark ? '#F8FAFC' : '#0F172A';
+        const borderBadge = isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.20)';
+
+        chart._labelBoxes = [];
+
+        chart.data.datasets.forEach((dataset, datasetIndex) => {
+          const meta = chart.getDatasetMeta(datasetIndex);
+          if (meta.hidden) return;
+
+          meta.data.forEach((element, index) => {
+            const val = dataset.data[index];
+            if (val === null || val === undefined || val === 0) return;
+
+            const formattedVal = formatChartValue(val, chart.canvas.id);
+            const pos = typeof element.tooltipPosition === 'function' ? element.tooltipPosition() : { x: element.x, y: element.y };
+
+            const key = `${datasetIndex}_${index}`;
+            const offset = (chart._labelOffsets && chart._labelOffsets[key]) ? chart._labelOffsets[key] : { dx: 0, dy: 0 };
+
+            let baseDx = 0;
+            let baseDy = (chart.config.type === 'doughnut' || chart.config.type === 'pie') ? 0 : -14;
+            if (chart.options && chart.options.indexAxis === 'y') {
+              baseDx = 25;
+              baseDy = 0;
+            }
+
+            const posX = pos.x + baseDx + offset.dx;
+            const posY = pos.y + baseDy + offset.dy;
+
+            const textMetrics = ctx.measureText(formattedVal);
+            const boxWidth = Math.max(textMetrics.width + 10, 22);
+            const boxHeight = 17;
+            const boxX = posX - boxWidth / 2;
+            const boxY = posY - boxHeight / 2;
+
+            chart._labelBoxes.push({
+              dsIdx: datasetIndex,
+              dataIdx: index,
+              x1: boxX,
+              y1: boxY,
+              x2: boxX + boxWidth,
+              y2: boxY + boxHeight
+            });
+
+            ctx.fillStyle = bgBadge;
+            ctx.strokeStyle = borderBadge;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            if (typeof ctx.roundRect === 'function') {
+              ctx.roundRect(boxX, boxY, boxWidth, boxHeight, 3);
+            } else {
+              ctx.rect(boxX, boxY, boxWidth, boxHeight);
+            }
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = textBadge;
+            ctx.fillText(formattedVal, posX, posY + 1);
+          });
+        });
+
+        ctx.restore();
+      }
+    };
+
+    Chart.register(draggableDataLabelsPlugin);
+
+    function toggleChartLabels(chartId, btn) {
+      const chart = charts[chartId];
+      if (!chart) return;
+      chart._showLabels = !chart._showLabels;
+      if (btn) btn.classList.toggle('active', chart._showLabels);
+      chart.render();
+    }
+
+    function toggleAllLabels(btn) {
+      allLabelsActive = !allLabelsActive;
+      btn.textContent = allLabelsActive ? 'Ocultar Rótulos' : 'Exibir Rótulos';
+      btn.classList.toggle('active', allLabelsActive);
+
+      for (let k in charts) {
+        if (charts[k]) {
+          charts[k]._showLabels = allLabelsActive;
+          charts[k].render();
+        }
+      }
+    }
+
+    function updateAfastamentoStatus(index, newStatus) {
+      if (currentAppData.afastamentos && currentAppData.afastamentos[index]) {
+        currentAppData.afastamentos[index].status = newStatus;
+        renderAfastamentosTable();
+        showToast('Status do afastamento atualizado!');
+      }
+    }
+
+    function updateProcessoStatus(index, newStatus) {
+      if (currentAppData.processos && currentAppData.processos[index]) {
+        currentAppData.processos[index].status = newStatus;
+        renderProcessosTable();
+        showToast('Status do processo atualizado!');
+      }
+    }
+
+    function filterProcessosByStatus(status) {
+      selectedProcessStatusFilter = status;
+      document.querySelectorAll('[data-status-filter]').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-status-filter') === status);
+      });
+      renderProcessosTable();
+    }
+
+    function filterAfastamentosByStatus(status) {
+      selectedAfastStatusFilter = status;
+      document.querySelectorAll('[data-afast-filter]').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-afast-filter') === status);
+      });
+      renderAfastamentosTable();
+    }
+
+    function filterHETable(type, val, btn) {
+      if (type === 'month') {
+        currentHeFilter.month = val;
+        document.querySelectorAll('[data-he-month]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      } else if (type === 'area') {
+        currentHeFilter.area = val;
+        document.querySelectorAll('[data-he-area]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+      renderHETable();
+    }
+
+    function renderHETable() {
+      const tbody = document.querySelector('#tableMensalArea tbody');
+      if (!tbody) return;
+
+      let list = AUDITED_HE_ROWS;
+      if (!currentAppData.isLoaded) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:20px; color:var(--text-muted);">Painel zerado. Importe as planilhas para visualizar os dados.</td></tr>`;
+        return;
+      }
+
+      if (currentHeFilter.month !== 'all') {
+        list = list.filter(r => r.mes === currentHeFilter.month);
+      }
+      if (currentHeFilter.area !== 'all') {
+        list = list.filter(r => r.area === currentHeFilter.area);
+      }
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:20px; color:var(--text-muted);">Nenhum registro encontrado para este filtro.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(r => {
+        const areaTag = r.area === 'Transporte' ? 'tag-transporte' : (r.area === 'Logística' ? 'tag-logistica' : 'tag-sga');
+        const varHEClass = r.varHE.startsWith('+') ? 'trend-negative' : 'trend-positive';
+        const varPCClass = r.varPC.startsWith('+') ? 'trend-negative' : 'trend-positive';
+        return `
+          <tr>
+            <td><strong>${r.mes}</strong></td>
+            <td><span class="tag-pill ${areaTag}">${r.area}</span></td>
+            <td class="mono">R$ ${r.he25.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td class="mono">R$ ${r.he26.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td class="mono ${varHEClass}">${r.varHE}</td>
+            <td class="mono">R$ ${r.pc25.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td class="mono">R$ ${r.pc26.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td class="mono ${varPCClass}">${r.varPC}</td>
+            <td class="mono">${r.col25}</td>
+            <td class="mono">${r.col26}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function getStatusClass(status) {
+      const s = status.toUpperCase();
+      if (s === 'FINALIZADO' || s === 'EM VIGÊNCIA') return 'status-finalizado';
+      if (s === 'AGUARDANDO' || s === 'EM ANDAMENTO') return 'status-aguardando';
+      if (s === 'ARQUIVADO' || s === 'ENCERRADO') return 'status-arquivado';
+      return 'status-recorrendo';
+    }
+
+    function updateChartColors() {
+      const isDark = currentTheme === 'dark';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)';
+      const textColor = isDark ? '#94A3B8' : '#64748B';
+      Chart.defaults.color = textColor;
+
+      for (let key in charts) {
+        if (charts[key] && charts[key].options && charts[key].options.scales) {
+          if (charts[key].options.scales.x) charts[key].options.scales.x.grid.color = gridColor;
+          if (charts[key].options.scales.y) charts[key].options.scales.y.grid.color = gridColor;
+          charts[key].update();
+        }
+      }
+    }
+
+    function renderAfastamentosTable() {
+      const tbody = document.querySelector('#tableAfastamentos tbody');
+      if (!tbody) return;
+      let list = currentAppData.afastamentos || [];
+
+      if (!currentAppData.isLoaded || list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--text-muted);">Nenhum afastamento registrado.</td></tr>`;
+        const countEl = document.getElementById('afastCountLabel');
+        if (countEl) countEl.textContent = 'Exibindo 0 registros';
+        return;
+      }
+
+      if (selectedAfastStatusFilter !== 'all') {
+        list = list.filter(a => a.status.toUpperCase() === selectedAfastStatusFilter.toUpperCase());
+      }
+
+      const countEl = document.getElementById('afastCountLabel');
+      if (countEl) countEl.textContent = `Exibindo ${list.length} de ${currentAppData.afastamentos.length} registros`;
+
+      tbody.innerHTML = list.map((a) => {
+        const areaTag = a.area.includes('TRANSPORTE') ? 'tag-transporte' : (a.area.includes('LOGÍSTICA') ? 'tag-logistica' : 'tag-sga');
+        const statusClass = getStatusClass(a.status);
+        const originalIndex = currentAppData.afastamentos.findIndex(x => x.nome === a.nome);
+
+        return `
+          <tr>
+            <td><strong>${a.nome}</strong></td>
+            <td><span class="tag-pill ${areaTag}">${a.area}</span></td>
+            <td>${a.tipo}</td>
+            <td class="mono">${a.data}</td>
+            <td class="mono">${a.impacto}</td>
+            <td>
+              <select class="status-select ${statusClass}" onchange="updateAfastamentoStatus(${originalIndex}, this.value)">
+                <option value="EM VIGÊNCIA" ${a.status === 'EM VIGÊNCIA' ? 'selected' : ''}>EM VIGÊNCIA</option>
+                <option value="EM ANDAMENTO" ${a.status === 'EM ANDAMENTO' ? 'selected' : ''}>EM ANDAMENTO</option>
+                <option value="ENCERRADO" ${a.status === 'ENCERRADO' ? 'selected' : ''}>ENCERRADO</option>
+                <option value="RETORNO AO TRABALHO" ${a.status === 'RETORNO AO TRABALHO' ? 'selected' : ''}>RETORNO AO TRABALHO</option>
+              </select>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderProcessosTable() {
+      const tbody = document.querySelector('#tableProcessos tbody');
+      if (!tbody) return;
+      let list = currentAppData.processos || [];
+
+      if (!currentAppData.isLoaded || list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--text-muted);">Nenhum processo cadastrado.</td></tr>`;
+        const countEl = document.getElementById('processosCountLabel');
+        if (countEl) countEl.textContent = 'Exibindo 0 processos';
+        return;
+      }
+
+      if (selectedProcessStatusFilter === 'PENDENTES') {
+        list = list.filter(p => p.status.toUpperCase() === 'AGUARDANDO' || p.status.toUpperCase() === 'EM ANDAMENTO');
+      } else if (selectedProcessStatusFilter !== 'all') {
+        list = list.filter(p => p.status.toUpperCase() === selectedProcessStatusFilter.toUpperCase());
+      }
+
+      const countEl = document.getElementById('processosCountLabel');
+      if (countEl) countEl.textContent = `Exibindo ${list.length} de ${currentAppData.processos.length} processos`;
+
+      tbody.innerHTML = list.map((p) => {
+        const originalIndex = currentAppData.processos.findIndex(x => x.reclamante === p.reclamante);
+        const areaTag = p.area.includes('TRANSPORTE') ? 'tag-transporte' : (p.area.includes('LOGISTICA') || p.area.includes('LOGÍSTICA') || p.area.includes('PREVENÇÃO') ? 'tag-logistica' : 'tag-sga');
+        const statusClass = getStatusClass(p.status);
+
+        return `
+          <tr>
+            <td><strong>${p.reclamante}</strong></td>
+            <td><span class="tag-pill ${areaTag}">${p.area}</span></td>
+            <td>${p.vara}</td>
+            <td>${p.pleito}</td>
+            <td class="mono">R$ ${p.causa.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td class="mono trend-positive">R$ ${p.sentenca.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            <td>
+              <select class="status-select ${statusClass}" onchange="updateProcessoStatus(${originalIndex}, this.value)">
+                <option value="FINALIZADO" ${p.status === 'FINALIZADO' ? 'selected' : ''}>FINALIZADO</option>
+                <option value="AGUARDANDO" ${p.status === 'AGUARDANDO' ? 'selected' : ''}>AGUARDANDO</option>
+                <option value="EM ANDAMENTO" ${p.status === 'EM ANDAMENTO' ? 'selected' : ''}>EM ANDAMENTO</option>
+                <option value="ARQUIVADO" ${p.status === 'ARQUIVADO' ? 'selected' : ''}>ARQUIVADO</option>
+                <option value="RECORRENDO" ${p.status === 'RECORRENDO' ? 'selected' : ''}>RECORRENDO</option>
+              </select>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderTables() {
+      const tbodyMatriz = document.querySelector('#tableMatrizSintetica tbody');
+      if (tbodyMatriz) {
+        if (currentAppData.isLoaded) {
+          tbodyMatriz.innerHTML = `
+            <tr><td><strong style="color: var(--color-logistica);">LOGÍSTICA</strong></td><td class="mono">R$ 786.429,62</td><td class="mono trend-positive">-43,97%</td><td class="mono" style="color:var(--accent-emerald);">R$ 32.108,67 (13)</td><td class="mono">R$ 22.863,06</td><td class="mono">23 colabs</td><td class="mono">5</td><td class="mono">R$ 9.810,68</td><td class="mono">42 dias</td><td class="mono">R$ 28.277,24</td></tr>
+            <tr><td><strong style="color: var(--color-sga);">SG&A (Administrativo)</strong></td><td class="mono">R$ 1.007.244,63</td><td class="mono trend-positive">-20,18%</td><td class="mono" style="color:var(--accent-emerald);">R$ 26.502,74 (10)</td><td class="mono">R$ 12.601,06</td><td class="mono">17 colabs</td><td class="mono">9</td><td class="mono">R$ 28.657,33</td><td class="mono">23 dias</td><td class="mono">R$ 22.000,00</td></tr>
+            <tr><td><strong style="color: var(--color-transporte);">TRANSPORTE</strong></td><td class="mono">R$ 2.268.459,28</td><td class="mono trend-positive">-3,39%</td><td class="mono" style="color:var(--accent-emerald);">R$ 75.867,05 (20)</td><td class="mono">R$ 73.627,38</td><td class="mono">41 colabs</td><td class="mono">37</td><td class="mono">R$ 224.183,81</td><td class="mono">281 dias</td><td class="mono">R$ 92.733,40</td></tr>
+            <tr style="font-weight: 500; background: var(--btn-bg);"><td><strong>TOTAL CONSOLIDADO</strong></td><td class="mono" style="color:var(--color-logistica);">R$ 4.062.133,53</td><td class="mono trend-positive">-18,98%</td><td class="mono" style="color:var(--accent-emerald);">R$ 134.478,46 (43)</td><td class="mono" style="color:var(--accent-emerald);">R$ 109.091,50</td><td class="mono">81 colabs</td><td class="mono">51</td><td class="mono" style="color:var(--color-transporte);">R$ 262.651,82</td><td class="mono">346 dias</td><td class="mono" style="color:var(--accent-rose);">R$ 143.010,64</td></tr>
+          `;
+        } else {
+          tbodyMatriz.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:20px; color:var(--text-muted);">Painel zerado. Importe as planilhas para visualizar os indicadores.</td></tr>`;
+        }
+      }
+
+      renderHETable();
+      renderAfastamentosTable();
+      renderProcessosTable();
+    }
+
+    function updateAllDashboardViews() {
+      const d = currentAppData.charts;
+
+      if (charts.chartFolhaEvolucao) {
+        charts.chartFolhaEvolucao.data.datasets[0].data = d.folhaEvolucao25;
+        charts.chartFolhaEvolucao.data.datasets[1].data = d.folhaEvolucao26;
+        charts.chartFolhaEvolucao.update();
+      }
+      if (charts.chartHEEvolucao) {
+        charts.chartHEEvolucao.data.datasets[0].data = d.heEvolucao25;
+        charts.chartHEEvolucao.data.datasets[1].data = d.heEvolucao26;
+        charts.chartHEEvolucao.update();
+      }
+      if (charts.chartExecFerias) {
+        charts.chartExecFerias.data.datasets[0].data = d.feriasArea;
+        charts.chartExecFerias.update();
+      }
+      if (charts.chartExecAbs) {
+        charts.chartExecAbs.data.datasets[0].data = currentAppData.isLoaded ? [281, 23, 42] : [0, 0, 0];
+        charts.chartExecAbs.update();
+      }
+      if (charts.chartJuridicoMitigacao) {
+        charts.chartJuridicoMitigacao.data.datasets[0].data = d.juridicoMitig;
+        charts.chartJuridicoMitigacao.update();
+      }
+      if (charts.chartEnfokVsPropria) {
+        charts.chartEnfokVsPropria.data.datasets[0].data = d.folhaCltMeses;
+        charts.chartEnfokVsPropria.data.datasets[1].data = d.enfokMeses;
+        charts.chartEnfokVsPropria.update();
+      }
+      if (charts.chartEnfokDistribuicao) {
+        charts.chartEnfokDistribuicao.data.datasets[0].data = d.enfokDistribuicaoArea;
+        charts.chartEnfokDistribuicao.update();
+      }
+      if (charts.chartFlexVsFat) {
+        charts.chartFlexVsFat.data.datasets[0].data = d.flexCustoMeses;
+        charts.chartFlexVsFat.data.datasets[1].data = d.flexCompFat;
+        charts.chartFlexVsFat.update();
+      }
+      if (charts.chartHistoricoSemestral) {
+        charts.chartHistoricoSemestral.data.datasets[0].data = d.histFolhaSemestral;
+        charts.chartHistoricoSemestral.data.datasets[1].data = d.histHESemestral;
+        charts.chartHistoricoSemestral.data.datasets[2].data = d.histRescisaoSemestral;
+        charts.chartHistoricoSemestral.update();
+      }
+      if (charts.chartFatXFolha) {
+        charts.chartFatXFolha.data.datasets[0].data = d.fatBruto12M;
+        charts.chartFatXFolha.data.datasets[1].data = d.folhaCusto12M;
+        charts.chartFatXFolha.data.datasets[2].data = d.fatComprometimento;
+        charts.chartFatXFolha.update();
+      }
+      if (charts.chartFeriasArea) {
+        charts.chartFeriasArea.data.datasets[0].data = d.feriasArea;
+        charts.chartFeriasArea.update();
+      }
+      if (charts.chartFeriasEvolucao) {
+        charts.chartFeriasEvolucao.data.datasets[0].data = d.feriasEvolucao;
+        charts.chartFeriasEvolucao.update();
+      }
+      if (charts.chartCompAcumuladoHE) {
+        charts.chartCompAcumuladoHE.data.datasets[0].data = d.compHE25;
+        charts.chartCompAcumuladoHE.data.datasets[1].data = d.compHE26;
+        charts.chartCompAcumuladoHE.update();
+      }
+      if (charts.chartCompAcumuladoPC) {
+        charts.chartCompAcumuladoPC.data.datasets[0].data = d.compPC25;
+        charts.chartCompAcumuladoPC.data.datasets[1].data = d.compPC26;
+        charts.chartCompAcumuladoPC.update();
+      }
+      if (charts.chartTurnoverMensal) {
+        charts.chartTurnoverMensal.data.datasets[0].data = d.turnoverAdmissoes;
+        charts.chartTurnoverMensal.data.datasets[1].data = d.turnoverDemissoes;
+        charts.chartTurnoverMensal.update();
+      }
+      if (charts.chartTurnoverTaxa) {
+        charts.chartTurnoverTaxa.data.datasets[0].data = d.turnoverTaxas;
+        charts.chartTurnoverTaxa.update();
+      }
+      if (charts.chartCustosMovimentacao) {
+        charts.chartCustosMovimentacao.data.datasets[0].data = d.custoAdmissoes;
+        charts.chartCustosMovimentacao.data.datasets[1].data = d.custoDemissoes;
+        charts.chartCustosMovimentacao.update();
+      }
+      if (charts.chartMotivosDemissao) {
+        charts.chartMotivosDemissao.data.datasets[0].data = d.motivosDemissao;
+        charts.chartMotivosDemissao.update();
+      }
+      if (charts.chartAtestadosEvolucao) {
+        charts.chartAtestadosEvolucao.data.datasets[0].data = d.atestadosTransp;
+        charts.chartAtestadosEvolucao.data.datasets[1].data = d.atestadosLog;
+        charts.chartAtestadosEvolucao.data.datasets[2].data = d.atestadosSga;
+        charts.chartAtestadosEvolucao.update();
+      }
+      if (charts.chartFaltasEvolucao) {
+        charts.chartFaltasEvolucao.data.datasets[0].data = d.faltasTransp;
+        charts.chartFaltasEvolucao.data.datasets[1].data = d.faltasLog;
+        charts.chartFaltasEvolucao.data.datasets[2].data = d.faltasSga;
+        charts.chartFaltasEvolucao.update();
+      }
+      if (charts.chartPassivoArea) {
+        charts.chartPassivoArea.data.datasets[0].data = d.passivoCausa;
+        charts.chartPassivoArea.data.datasets[1].data = d.passivoSentenca;
+        charts.chartPassivoArea.update();
+      }
+      if (charts.chartPleitosFrequencia) {
+        charts.chartPleitosFrequencia.data.datasets[0].data = d.pleitosFreq;
+        charts.chartPleitosFrequencia.update();
+      }
+
+      renderTables();
+      applyMonthFilter(selectedMonth);
+    }
+
+    function handleSingleFileUpload(type, file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+
+          if (type === 'folha') {
+            const badge = document.getElementById('statusBadgeFolha');
+            if (badge) { badge.textContent = 'Carregada'; badge.classList.add('loaded'); }
+            const info = document.getElementById('infoFolhaFile');
+            if (info) info.textContent = `${file.name} (${workbook.SheetNames.length} abas)`;
+          } else if (type === 'he') {
+            const badge = document.getElementById('statusBadgeHE');
+            if (badge) { badge.textContent = 'Carregada'; badge.classList.add('loaded'); }
+            const info = document.getElementById('infoHEFile');
+            if (info) info.textContent = `${file.name} (${workbook.SheetNames.length} abas)`;
+          }
+
+          currentAppData = JSON.parse(JSON.stringify(AUDITED_SAMPLE_DATA));
+          currentAppData.isLoaded = true;
+          showToast(`Planilha "${file.name}" processada com sucesso!`);
+        } catch (err) {
+          console.error('Erro ao ler planilha:', err);
+          alert('Erro ao processar o arquivo Excel: ' + file.name);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function confirmAndApplyUpload() {
+      currentAppData.isLoaded = true;
+      updateAllDashboardViews();
+      
+      const dot = document.getElementById('statusDotIndicator');
+      if (dot) dot.className = 'status-dot';
+      const txtBadge = document.getElementById('txt-badge');
+      if (txtBadge) txtBadge.textContent = 'Dados Consolidados';
+      
+      closeUploadModal();
+      showToast('Dashboard e gráficos 100% atualizados!');
+    }
+
+    function loadSampleDataAudit() {
+      currentAppData = JSON.parse(JSON.stringify(AUDITED_SAMPLE_DATA));
+      updateAllDashboardViews();
+      
+      const dot = document.getElementById('statusDotIndicator');
+      if (dot) dot.className = 'status-dot';
+      const txtBadge = document.getElementById('txt-badge');
+      if (txtBadge) txtBadge.textContent = 'Base Auditada — 1S 2026';
+      
+      closeUploadModal();
+      showToast('Base auditada restaurada!');
+    }
+
+    // INICIALIZAÇÃO SEGURA DOS GRÁFICOS
+    function initCharts() {
+      const isDark = currentTheme === 'dark';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)';
+      const d = currentAppData.charts;
+
+      const getCtx = (id) => {
+        const el = document.getElementById(id);
+        return el ? el.getContext('2d') : null;
+      };
+
+      if (getCtx('chartFolhaEvolucao')) {
+        charts.chartFolhaEvolucao = new Chart(getCtx('chartFolhaEvolucao'), {
+          type: 'line',
+          data: {
+            labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+            datasets: [
+              { label: 'Folha 2025 (R$)', data: d.folhaEvolucao25, borderColor: areaColors.sga, borderDash: [5, 5], tension: 0.35, pointRadius: 4 },
+              { label: 'Folha 2026 (R$)', data: d.folhaEvolucao26, borderColor: areaColors.logistica, backgroundColor: 'rgba(2, 132, 199, 0.08)', fill: true, tension: 0.35, pointRadius: 4 }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { color: gridColor } }, y: { grid: { color: gridColor } } } }
+        });
+      }
+
+      if (getCtx('chartHEEvolucao')) {
+        charts.chartHEEvolucao = new Chart(getCtx('chartHEEvolucao'), {
+          type: 'line',
+          data: {
+            labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
+            datasets: [
+              { label: 'HE 2025 (R$)', data: d.heEvolucao25, borderColor: '#E11D48', borderDash: [4, 4], tension: 0.35 },
+              { label: 'HE 2026 (R$)', data: d.heEvolucao26, borderColor: '#059669', backgroundColor: 'rgba(5, 150, 105, 0.08)', fill: true, tension: 0.35 }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { color: gridColor } }, y: { grid: { color: gridColor } } } }
+        });
+      }
+
+      if (getCtx('chartExecFerias')) {
+        charts.chartExecFerias = new Chart(getCtx('chartExecFerias'), {
+          type: 'bar',
+          data: {
+            labels: ['Transporte (75,8k)', 'SG&A (26,5k)', 'Logística (32,1k)'],
+            datasets: [{ label: 'Férias 1S26 (R$)', data: d.feriasArea, backgroundColor: [areaColors.transporte, areaColors.sga, areaColors.logistica], borderRadius: 4 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      if (getCtx('chartExecAbs')) {
+        charts.chartExecAbs = new Chart(getCtx('chartExecAbs'), {
+          type: 'bar',
+          data: {
+            labels: ['Transporte (281d)', 'SG&A (23d)', 'Logística (42d)'],
+            datasets: [{ label: 'Dias de Atestado', data: [281, 23, 42], backgroundColor: [areaColors.transporte, areaColors.sga, areaColors.logistica], borderRadius: 4 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      if (getCtx('chartJuridicoMitigacao')) {
+        charts.chartJuridicoMitigacao = new Chart(getCtx('chartJuridicoMitigacao'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Economia Mitigada (89.5%)', 'Sentenças (10.5%)'],
+            datasets: [{ data: d.juridicoMitig, backgroundColor: ['#059669', '#E11D48'], borderWidth: 0 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, cutout: '70%' }
+        });
+      }
+
+      if (getCtx('chartEnfokVsPropria')) {
+        charts.chartEnfokVsPropria = new Chart(getCtx('chartEnfokVsPropria'), {
+          type: 'bar',
+          data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+            datasets: [
+              { label: 'Folha Própria CLT (R$)', data: d.folhaCltMeses, backgroundColor: 'rgba(2, 132, 199, 0.45)', stack: 's1' },
+              { label: 'Enfok Terceirizada (R$)', data: d.enfokMeses, backgroundColor: areaColors.enfok, stack: 's1' }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false } }, y: { grid: { color: gridColor }, ticks: { callback: v => 'R$ ' + (v/1000).toFixed(0) + 'k' } } } }
+        });
+      }
+
+      if (getCtx('chartEnfokDistribuicao')) {
+        charts.chartEnfokDistribuicao = new Chart(getCtx('chartEnfokDistribuicao'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Transporte (R$ 196.661,39)', 'Logística (R$ 24.475,04)', 'SG&A (R$ 18.768,78)'],
+            datasets: [{ data: d.enfokDistribuicaoArea, backgroundColor: [areaColors.transporte, areaColors.logistica, areaColors.sga], borderWidth: 0 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, cutout: '68%' }
+        });
+      }
+
+      if (getCtx('chartFlexVsFat')) {
+        charts.chartFlexVsFat = new Chart(getCtx('chartFlexVsFat'), {
+          type: 'bar',
+          data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+            datasets: [
+              { type: 'bar', label: 'Desembolso (HE + Enfok)', data: d.flexCustoMeses, backgroundColor: 'rgba(234, 88, 12, 0.65)', borderRadius: 4, yAxisID: 'y' },
+              { type: 'line', label: '% Impacto sobre Faturamento', data: d.flexCompFat, borderColor: '#7C3AED', tension: 0.35, yAxisID: 'y1' }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { display: false } },
+              y: { grid: { color: gridColor }, ticks: { callback: v => 'R$ ' + (v/1000).toFixed(0) + 'k' } },
+              y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { callback: v => v + '%' } }
+            }
+          }
+        });
+      }
+
+      if (getCtx('chartHistoricoSemestral')) {
+        charts.chartHistoricoSemestral = new Chart(getCtx('chartHistoricoSemestral'), {
+          type: 'bar',
+          data: {
+            labels: d.semestresLabels,
+            datasets: [
+              { label: 'Folha Total (R$)', data: d.histFolhaSemestral, backgroundColor: 'rgba(2, 132, 199, 0.7)', borderRadius: 4 },
+              { label: 'Horas Extras (R$)', data: d.histHESemestral, backgroundColor: 'rgba(234, 88, 12, 0.7)', borderRadius: 4 },
+              { label: 'Custo Rescisório (R$)', data: d.histRescisaoSemestral, backgroundColor: 'rgba(225, 29, 72, 0.7)', borderRadius: 4 }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false } }, y: { grid: { color: gridColor }, ticks: { callback: v => 'R$ ' + (v/1000000).toFixed(1) + 'M' } } } }
+        });
+      }
+
+      if (getCtx('chartFatXFolha')) {
+        charts.chartFatXFolha = new Chart(getCtx('chartFatXFolha'), {
+          type: 'bar',
+          data: {
+            labels: d.monthsLabels12,
+            datasets: [
+              { type: 'bar', label: 'Faturamento Bruto (R$)', data: d.fatBruto12M, backgroundColor: 'rgba(79, 70, 229, 0.45)', borderRadius: 4, yAxisID: 'y' },
+              { type: 'bar', label: 'Custo da Folha (CLT + Enfok) (R$)', data: d.folhaCusto12M, backgroundColor: 'rgba(2, 132, 199, 0.75)', borderRadius: 4, yAxisID: 'y' },
+              { type: 'line', label: '% Comprometimento (Folha Total / FAT)', data: d.fatComprometimento, borderColor: '#D97706', tension: 0.3, yAxisID: 'y1' }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { display: false } },
+              y: { grid: { color: gridColor }, ticks: { callback: v => 'R$ ' + (v/1000000).toFixed(1) + 'M' } },
+              y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { callback: v => v + '%' } }
+            }
+          }
+        });
+      }
+
+      if (getCtx('chartFeriasArea')) {
+        charts.chartFeriasArea = new Chart(getCtx('chartFeriasArea'), {
+          type: 'bar',
+          data: {
+            labels: ['Transporte (75,8k)', 'SG&A (26,5k)', 'Logística (32,1k)'],
+            datasets: [{ label: 'Custo de Férias (R$)', data: d.feriasArea, backgroundColor: [areaColors.transporte, areaColors.sga, areaColors.logistica], borderRadius: 4 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      if (getCtx('chartFeriasEvolucao')) {
+        charts.chartFeriasEvolucao = new Chart(getCtx('chartFeriasEvolucao'), {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+            datasets: [{ label: 'Desembolso Mensal (R$)', data: d.feriasEvolucao, borderColor: '#059669', backgroundColor: 'rgba(5, 150, 105, 0.08)', fill: true, tension: 0.35 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      if (getCtx('chartCompAcumuladoHE')) {
+        charts.chartCompAcumuladoHE = new Chart(getCtx('chartCompAcumuladoHE'), {
+          type: 'bar',
+          data: {
+            labels: ['Transporte', 'Logística', 'SG&A'],
+            datasets: [
+              { label: 'HE 2025 (R$)', data: d.compHE25, backgroundColor: 'rgba(148, 163, 184, 0.45)', borderRadius: 4 },
+              { label: 'HE 2026 (R$)', data: d.compHE26, backgroundColor: [areaColors.transporte, areaColors.logistica, areaColors.sga], borderRadius: 4 }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      if (getCtx('chartCompAcumuladoPC')) {
+        charts.chartCompAcumuladoPC = new Chart(getCtx('chartCompAcumuladoPC'), {
+          type: 'bar',
+          data: {
+            labels: ['Transporte', 'Logística', 'SG&A'],
+            datasets: [
+              { label: 'Per Capita 2025 (R$)', data: d.compPC25, backgroundColor: 'rgba(148, 163, 184, 0.45)', borderRadius: 4 },
+              { label: 'Per Capita 2026 (R$)', data: d.compPC26, backgroundColor: [areaColors.transporte, areaColors.logistica, areaColors.sga], borderRadius: 4 }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      if (getCtx('chartTurnoverMensal')) {
+        charts.chartTurnoverMensal = new Chart(getCtx('chartTurnoverMensal'), {
+          type: 'bar',
+          data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+            datasets: [
+              { label: 'Admissões (Contratações)', data: d.turnoverAdmissoes, backgroundColor: '#059669', borderRadius: 4 },
+              { label: 'Desligamentos (Demissões)', data: d.turnoverDemissoes, backgroundColor: '#E11D48', borderRadius: 4 }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false } }, y: { grid: { color: gridColor } } } }
+        });
+      }
+
+      if (getCtx('chartTurnoverTaxa')) {
+        charts.chartTurnoverTaxa = new Chart(getCtx('chartTurnoverTaxa'), {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+            datasets: [{
+              label: 'Taxa de Turnover (%)',
+              data: d.turnoverTaxas,
+              borderColor: '#EA580C',
+              backgroundColor: 'rgba(234, 88, 12, 0.08)',
+              fill: true,
+              borderWidth: 2.4,
+              tension: 0.35,
+              pointRadius: 4
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { color: gridColor } }, y: { grid: { color: gridColor }, ticks: { callback: v => v + '%' } } } }
+        });
+      }
+
+      if (getCtx('chartCustosMovimentacao')) {
+        charts.chartCustosMovimentacao = new Chart(getCtx('chartCustosMovimentacao'), {
+          type: 'bar',
+          data: {
+            labels: ['Transporte', 'Logística', 'SG&A'],
+            datasets: [
+              { label: 'Custo Admissões (R$)', data: d.custoAdmissoes, backgroundColor: '#059669', borderRadius: 4 },
+              { label: 'Custo Rescisões (R$)', data: d.custoDemissoes, backgroundColor: '#E11D48', borderRadius: 4 }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      if (getCtx('chartMotivosDemissao')) {
+        charts.chartMotivosDemissao = new Chart(getCtx('chartMotivosDemissao'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Pedido Demissão (21)', 'Dispensa Sem JC (23)', 'Término Contrato (6)', 'Dispensa Com JC (4)', 'Quebra Contrato (2)'],
+            datasets: [{ data: d.motivosDemissao, backgroundColor: [areaColors.logistica, areaColors.transporte, '#059669', '#E11D48', areaColors.sga], borderWidth: 0 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, cutout: '68%' }
+        });
+      }
+
+      if (getCtx('chartAtestadosEvolucao')) {
+        charts.chartAtestadosEvolucao = new Chart(getCtx('chartAtestadosEvolucao'), {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+            datasets: [
+              { label: 'Transporte (Dias)', data: d.atestadosTransp, borderColor: areaColors.transporte, tension: 0.3 },
+              { label: 'Logística (Dias)', data: d.atestadosLog, borderColor: areaColors.logistica, tension: 0.3 },
+              { label: 'SG&A (Dias)', data: d.atestadosSga, borderColor: areaColors.sga, tension: 0.3 }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      if (getCtx('chartFaltasEvolucao')) {
+        charts.chartFaltasEvolucao = new Chart(getCtx('chartFaltasEvolucao'), {
+          type: 'bar',
+          data: {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+            datasets: [
+              { label: 'Transporte', data: d.faltasTransp, backgroundColor: areaColors.transporte, stack: 'f' },
+              { label: 'Logística', data: d.faltasLog, backgroundColor: areaColors.logistica, stack: 'f' },
+              { label: 'SG&A', data: d.faltasSga, backgroundColor: areaColors.sga, stack: 'f' }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      if (getCtx('chartPassivoArea')) {
+        charts.chartPassivoArea = new Chart(getCtx('chartPassivoArea'), {
+          type: 'bar',
+          data: {
+            labels: ['Transporte', 'Logística', 'SG&A'],
+            datasets: [
+              { label: 'Valor Causa (R$)', data: d.passivoCausa, backgroundColor: 'rgba(225, 29, 72, 0.45)', borderRadius: 4 },
+              { label: 'Sentença Fixada (R$)', data: d.passivoSentenca, backgroundColor: '#059669', borderRadius: 4 }
+            ]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
+
+      if (getCtx('chartPleitosFrequencia')) {
+        charts.chartPleitosFrequencia = new Chart(getCtx('chartPleitosFrequencia'), {
+          type: 'bar',
+          data: {
+            labels: ['Horas Extras', 'Dano e Assédio Moral', 'Desvio/Acúmulo', 'Insalubridade', 'Vínculo CLT Retroativo', 'Rescisão Indireta', 'FGTS em Atraso'],
+            datasets: [{ label: 'Qtd Processos', data: d.pleitosFreq, backgroundColor: areaColors.transporte, borderRadius: 4 }]
+          },
+          options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
+        });
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSavedTextEdits();
+      initCharts();
+      updateAllDashboardViews();
+      updateScenarioWidget();
+      setTimeout(() => { startTour(false); }, 600);
+    });
+  </script>
+</body>
+</html>
